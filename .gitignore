@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual Environment
+.venv/
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Ruff
+.ruff_cache/
+
+# Mypy
+.mypy_cache/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime data
+data/jobs.json
+data/history.json
+
+# extra
+core-local.md
