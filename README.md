@@ -73,6 +73,8 @@ Under active development.
 ---
 
 ### Branch Flow
+
+```text
                 main
                   │
         ┌─────────┴─────────┐
@@ -89,6 +91,8 @@ Development             GitHub Actions
                          jobs.json
                          history.json
                          cache.json
+
+```
 
 The workflow would be:
 
