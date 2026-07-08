@@ -27,9 +27,7 @@ class PublishHistory:
             "published": sorted(published),
         }
 
-        self.path.write_text(
-            json.dumps(payload, indent=4, ensure_ascii=False)
-        )
+        self.path.write_text(json.dumps(payload, indent=4, ensure_ascii=False))
 
     def contains(self, identifier: str) -> bool:
         return identifier in self.load()

@@ -20,24 +20,16 @@ class JobDatabase:
     def load(self) -> list[Job]:
         data = json.loads(self.path.read_text())
 
-        return [
-            Job.model_validate(job)
-            for job in data["jobs"]
-        ]
+        return [Job.model_validate(job) for job in data["jobs"]]
 
     def save(self, jobs: list[Job]) -> None:
         payload = {
             "version": 1,
             "updated_at": datetime.now(UTC).isoformat(),
-            "jobs": [
-                job.model_dump(mode="json")
-                for job in jobs
-            ],
+            "jobs": [job.model_dump(mode="json") for job in jobs],
         }
 
-        self.path.write_text(
-            json.dumps(payload, indent=4, ensure_ascii=False)
-        )
+        self.path.write_text(json.dumps(payload, indent=4, ensure_ascii=False))
 
     def add(self, job: Job) -> bool:
         jobs = self.load()
@@ -51,7 +43,4 @@ class JobDatabase:
         return True
 
     def exists(self, identifier: str) -> bool:
-        return any(
-            job.identifier == identifier
-            for job in self.load()
-        )
+        return any(job.identifier == identifier for job in self.load())

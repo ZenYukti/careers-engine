@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Self
 
@@ -26,7 +26,7 @@ class Job(BaseModel):
 
     priority: Priority = Priority.NORMAL
 
-    discovered_at: datetime = Field(default_factory=datetime.utcnow)
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @property
     def identifier(self) -> str:
