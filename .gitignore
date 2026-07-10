@@ -26,6 +26,7 @@ Thumbs.db
 # Runtime data
 data/jobs.json
 data/history.json
+data/cache/
 
 # extra
 core-local.md
