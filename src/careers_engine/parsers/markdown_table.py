@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 
+from bs4 import BeautifulSoup
+
 from careers_engine.parsers.base import BaseParser
 
 
@@ -10,6 +12,23 @@ class MarkdownTableParser(BaseParser):
 
     TABLE_START = re.compile(r"<!-- TABLE_(.+?)_START -->")
     TABLE_END = re.compile(r"<!-- TABLE_(.+?)_END -->")
+
+    @staticmethod
+    def _extract_text(html: str) -> str:
+        """Extract plain text from HTML."""
+        return BeautifulSoup(html, "html.parser").get_text(strip=True)
+
+    @staticmethod
+    def _extract_href(html: str) -> str:
+        """Extract hyperlink from HTML."""
+        soup = BeautifulSoup(html, "html.parser")
+
+        link = soup.find("a")
+
+        if link and link.has_attr("href"):
+            return str(link["href"])
+
+        return html
 
     def parse(self, content: str) -> list[dict]:
         rows: list[dict] = []
@@ -51,10 +70,10 @@ class MarkdownTableParser(BaseParser):
             rows.append(
                 {
                     "category": current_category,
-                    "company": columns[0],
+                    "company": self._extract_text(columns[0]),
                     "role": columns[1],
                     "location": columns[2],
-                    "posting": columns[3],
+                    "posting": self._extract_href(columns[3]),
                     "age": columns[4],
                 }
             )
