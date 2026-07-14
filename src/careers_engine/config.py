@@ -11,3 +11,12 @@ CACHE_DIR = DATA_DIR / "cache"
 REQUEST_TIMEOUT = 20
 
 USER_AGENT = "ZenYukti Jobs/0.1 (https://github.com/ZenYukti/careers-engine)"
+
+UPSTREAM_REPOSITORY = "speedyapply/2027-SWE-College-Jobs"
+
+UPSTREAM_BRANCH = "main"
+
+UPSTREAM_FILES = [
+    "INTERN_INTL.md",
+    "NEW_GRAD_INTL.md",
+]
