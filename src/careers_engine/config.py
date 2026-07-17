@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import os
 from pathlib import Path
 
 APP_NAME = "ZenYukti Jobs"
@@ -20,3 +23,7 @@ UPSTREAM_FILES = [
     "INTERN_INTL.md",
     "NEW_GRAD_INTL.md",
 ]
+
+DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN", "")
+
+DISCORD_CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
