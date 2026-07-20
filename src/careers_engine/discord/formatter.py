@@ -12,8 +12,13 @@ class JobFormatter:
         embed = discord.Embed(
             title=job.role,
             url=job.apply_url,
-            description=f"**{job.company}**",
             color=discord.Color.blue(),
+        )
+
+        embed.add_field(
+            name="Company",
+            value=job.company,
+            inline=False,
         )
 
         embed.add_field(
@@ -23,7 +28,7 @@ class JobFormatter:
         )
 
         embed.add_field(
-            name="Employment",
+            name="Role Type",
             value=job.employment_type.value,
             inline=True,
         )
@@ -49,12 +54,20 @@ class JobFormatter:
                 inline=False,
             )
 
+        # embed.add_field(
+        #     name="🔗 Apply",
+        #     value=f"[Apply Here]({job.apply_url})",
+        #     inline=False,
+        # )
+
+        # hiding the apply label
+
         embed.add_field(
-            name="Apply",
-            value=f"[Click Here]({job.apply_url})",
+            name="\u200b",  # Invisible field name
+            value=f"🔗 **[Apply Here]({job.apply_url})**",
             inline=False,
         )
 
-        embed.set_footer(text="ZenYukti Jobs")
+        embed.set_footer(text="Powered by ZenYukti Jobs")
 
         return embed
