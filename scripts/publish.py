@@ -14,9 +14,6 @@ async def main() -> None:
 
     new_jobs = database.sync(jobs)
 
-    print(f"Collected {len(jobs)} jobs.")
-    print(f"New jobs: {len(new_jobs)}")
-
     if not new_jobs:
         return
 
