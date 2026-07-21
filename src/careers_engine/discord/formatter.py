@@ -3,6 +3,7 @@ from __future__ import annotations
 import discord
 
 from careers_engine.company import COMPANY_BRANDS, DEFAULT_BRAND
+from careers_engine.company.logos import get_logo_url
 from careers_engine.models import Job
 
 
@@ -14,6 +15,8 @@ class JobFormatter:
             job.company,
             DEFAULT_BRAND,
         )
+
+        logo_url = get_logo_url(job.company)
 
         embed = discord.Embed(
             title=job.role,
@@ -29,9 +32,13 @@ class JobFormatter:
         #     inline=False,
         # )
 
-        embed.set_author(
-            name=job.company,
-        )
+        if logo_url:
+            embed.set_author(
+                name=job.company,
+                icon_url=logo_url,
+            )
+        else:
+            embed.set_author(name=job.company)
 
         embed.add_field(
             name="Location",

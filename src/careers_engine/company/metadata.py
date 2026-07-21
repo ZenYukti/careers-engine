@@ -8,4 +8,3 @@ class CompanyMetadata:
     """Visual branding information for a company."""
 
     color: int
-    thumbnail: str | None = None
