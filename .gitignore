@@ -30,3 +30,6 @@ data/cache/
 
 # extra
 core-local.md
+
+# Environment variables
+.env
