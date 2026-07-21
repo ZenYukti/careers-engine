@@ -21,10 +21,16 @@ class JobFormatter:
             color=brand.color,
         )
 
-        embed.add_field(
-            name="Company",
-            value=job.company,
-            inline=False,
+        # update the embed to keep company directly without label
+
+        # embed.add_field(
+        #     name="Company",
+        #     value=job.company,
+        #     inline=False,
+        # )
+
+        embed.set_author(
+            name=job.company,
         )
 
         embed.add_field(

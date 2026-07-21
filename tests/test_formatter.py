@@ -15,17 +15,14 @@ def test_formatter() -> None:
     assert embed.title == "Software Engineer Intern"
     assert embed.url == "https://google.com"
 
-    assert embed.fields[0].name == "Company"
-    assert embed.fields[0].value == "Google"
+    assert embed.author.name == "Google"
 
-    assert embed.fields[1].name == "Location"
-    assert embed.fields[1].value == "Bengaluru, India"
+    fields = {field.name: field.value for field in embed.fields}
 
-    assert embed.fields[2].name == "Role Type"
-    assert embed.fields[2].value == "Internship"
+    assert fields["Location"] == "Bengaluru, India"
+    assert fields["Role Type"] == "Internship"
+    assert fields["\u200b"] == "🔗 **[Apply Here](https://google.com)**"
 
-    assert embed.fields[-1].name == "\u200b"
-    assert embed.fields[-1].value == "🔗 **[Apply Here](https://google.com)**"
     assert embed.footer.text == "Powered by ZenYukti Jobs"
 
     assert embed.color.value == 0x4285F4
