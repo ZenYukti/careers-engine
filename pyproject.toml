@@ -17,6 +17,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "pyyaml>=6.0.3",
     "python-dotenv>=1.1.1",
+    "cairosvg>=2.9.0",
 ]
 
 [dependency-groups]
