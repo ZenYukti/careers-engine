@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import discord
 
+from careers_engine.company import COMPANY_BRANDS, DEFAULT_BRAND
 from careers_engine.models import Job
 
 
@@ -9,10 +10,15 @@ class JobFormatter:
     """Convert a Job into a Discord embed."""
 
     def format(self, job: Job) -> discord.Embed:
+        brand = COMPANY_BRANDS.get(
+            job.company,
+            DEFAULT_BRAND,
+        )
+
         embed = discord.Embed(
             title=job.role,
             url=job.apply_url,
-            color=discord.Color.blue(),
+            color=brand.color,
         )
 
         embed.add_field(

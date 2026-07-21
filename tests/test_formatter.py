@@ -27,3 +27,5 @@ def test_formatter() -> None:
     assert embed.fields[-1].name == "\u200b"
     assert embed.fields[-1].value == "🔗 **[Apply Here](https://google.com)**"
     assert embed.footer.text == "Powered by ZenYukti Jobs"
+
+    assert embed.color.value == 0x4285F4
