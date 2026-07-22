@@ -4,13 +4,14 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from careers_engine.config import HISTORY_FILE
 from careers_engine.models import Job
 
 
 class PublishHistory:
     """Stores identifiers of already published jobs."""
 
-    def __init__(self, path: str | Path = "data/history.json") -> None:
+    def __init__(self, path: str | Path = HISTORY_FILE) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -53,9 +54,6 @@ class PublishHistory:
 
         published = self.load()
 
-        published.update(
-            job.identifier
-            for job in jobs
-        )
+        published.update(job.identifier for job in jobs)
 
         self.save(published)

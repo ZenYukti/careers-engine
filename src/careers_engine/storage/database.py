@@ -4,13 +4,14 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from careers_engine.config import JOBS_FILE
 from careers_engine.models import Job
 
 
 class JobDatabase:
     """Persistent storage for discovered jobs."""
 
-    def __init__(self, path: str | Path = "data/jobs.json") -> None:
+    def __init__(self, path: str | Path = JOBS_FILE) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
 

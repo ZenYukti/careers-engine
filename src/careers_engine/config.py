@@ -9,7 +9,12 @@ load_dotenv()  # load environment variables from .env file
 
 APP_NAME = "ZenYukti Jobs"
 
-DATA_DIR = Path("data")
+DATA_DIR = Path(
+    os.environ.get(
+        "DATA_DIR",
+        "data",
+    )
+)
 
 JOBS_FILE = DATA_DIR / "jobs.json"
 HISTORY_FILE = DATA_DIR / "history.json"
