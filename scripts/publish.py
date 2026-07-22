@@ -3,22 +3,26 @@ from __future__ import annotations
 import asyncio
 
 from careers_engine.discord.client import DiscordClient
-from careers_engine.pipeline import Pipeline
-from careers_engine.storage import JobDatabase
+from careers_engine.storage import JobDatabase, PublishHistory
 
 
 async def main() -> None:
     database = JobDatabase()
+    history = PublishHistory()
 
-    jobs = await Pipeline().collect()
+    jobs = database.load()
 
-    new_jobs = database.sync(jobs)
+    jobs = history.unpublished(jobs)
 
-    if not new_jobs:
+    if not jobs:
+        print("No unpublished jobs found.")
         return
 
-    client = DiscordClient(new_jobs)
+    client = DiscordClient(jobs)
+
     await client.start_client()
+
+    history.mark_published(jobs)
 
 
 if __name__ == "__main__":

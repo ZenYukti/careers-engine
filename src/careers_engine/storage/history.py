@@ -4,6 +4,8 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from careers_engine.models import Job
+
 
 class PublishHistory:
     """Stores identifiers of already published jobs."""
@@ -36,5 +38,24 @@ class PublishHistory:
         published = self.load()
 
         published.add(identifier)
+
+        self.save(published)
+
+    def unpublished(self, jobs: list[Job]) -> list[Job]:
+        """Return jobs that have not been published."""
+
+        published = self.load()
+
+        return [job for job in jobs if job.identifier not in published]
+
+    def mark_published(self, jobs: list[Job]) -> None:
+        """Record published jobs."""
+
+        published = self.load()
+
+        published.update(
+            job.identifier
+            for job in jobs
+        )
 
         self.save(published)

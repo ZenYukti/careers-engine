@@ -28,3 +28,52 @@ def test_history(tmp_path):
     history.add(identifier)
 
     assert history.contains(identifier)
+
+
+def test_unpublished_jobs(tmp_path):
+    history = PublishHistory(tmp_path / "history.json")
+
+    jobs = [
+        Job(
+            company="Google",
+            role="Software Engineer Intern",
+            location="Bengaluru",
+            apply_url="https://google.com",
+        ),
+        Job(
+            company="Microsoft",
+            role="Software Engineer Intern",
+            location="Hyderabad",
+            apply_url="https://microsoft.com",
+        ),
+    ]
+
+    history.mark_published([jobs[0]])
+
+    unpublished = history.unpublished(jobs)
+
+    assert unpublished == [jobs[1]]
+
+
+def test_mark_published(tmp_path):
+    history = PublishHistory(tmp_path / "history.json")
+
+    jobs = [
+        Job(
+            company="Google",
+            role="Software Engineer Intern",
+            location="Bengaluru",
+            apply_url="https://google.com",
+        ),
+        Job(
+            company="Microsoft",
+            role="Software Engineer Intern",
+            location="Hyderabad",
+            apply_url="https://microsoft.com",
+        ),
+    ]
+
+    history.mark_published(jobs)
+
+    assert history.contains(jobs[0].identifier)
+    assert history.contains(jobs[1].identifier)
