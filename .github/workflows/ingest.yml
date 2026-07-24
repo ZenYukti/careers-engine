@@ -31,15 +31,7 @@ jobs:
       - name: Collect jobs
         run: uv run scripts/collect.py
 
-      - name: Check for data branch
-        id: data_branch
+      - name: Clone careers-data
         run: |
-          if git ls-remote --heads origin data | grep -q data; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Show branch status
-        run: |
-          echo "Data branch exists: ${{ steps.data_branch.outputs.exists }}"
+          git clone \
+            https://x-access-token:${{ secrets.CAREERS_DATA_TOKEN }}@github.com/ZenYukti/careers-data.git
