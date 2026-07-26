@@ -60,14 +60,23 @@ class JobDatabase:
         return any(job.identifier == identifier for job in self.load())
 
     def sync(self, jobs: list[Job]) -> list[Job]:
-        """Persist jobs and return newly discovered ones."""
+        """Persist jobs and return newly discovered jobs."""
 
         existing = self.load()
 
-        existing_ids = {job.identifier for job in existing}
+        existing_by_id = {job.identifier: job for job in existing}
 
-        new_jobs = [job for job in jobs if job.identifier not in existing_ids]
+        merged_jobs: list[Job] = []
+        new_jobs: list[Job] = []
 
-        self.save(jobs)
+        for job in jobs:
+            if job.identifier in existing_by_id:
+                merged_jobs.append(existing_by_id[job.identifier])
+            else:
+                merged_jobs.append(job)
+                new_jobs.append(job)
+
+        if new_jobs:
+            self.save(merged_jobs)
 
         return new_jobs

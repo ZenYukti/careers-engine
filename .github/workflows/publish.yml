@@ -10,12 +10,49 @@ jobs:
     env:
       DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+      DATA_DIR: careers-data
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v6
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
 
-      - run: uv sync
+      - name: Install dependencies
+        run: uv sync
 
-      - run: uv run scripts/publish.py
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Clone the external data repository used to persist publishing state.      
+      
+      - name: Clone careers-data
+        run: |
+          git clone \
+            --depth 1 \
+            https://x-access-token:${{ secrets.CAREERS_DATA_TOKEN }}@github.com/ZenYukti/careers-data.git
+
+      - name: Publish jobs
+        run: |
+          uv run scripts/publish.py
+
+      - name: Commit updated publishing history
+        run: |
+          cd careers-data
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add history.json
+
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "No publishing history changes."
+            exit 0
+          fi
+
+          git commit -m "chore(data): update publishing history"
+
+          git push

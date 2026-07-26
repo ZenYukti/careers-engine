@@ -3,15 +3,12 @@ name: Ingest Jobs
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   ingest:
     runs-on: ubuntu-latest
 
     env:
-      DATA_DIR: generated
+      DATA_DIR: careers-data
 
     steps:
       - name: Checkout source
@@ -28,10 +25,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Collect jobs
-        run: uv run scripts/collect.py
-
-      # careers-data stores generated datasets separately from source code.
+      # Clone the external data repository used to persist collected jobs.      
       
       - name: Clone careers-data
         run: |
@@ -39,9 +33,9 @@ jobs:
             --depth 1 \
             https://x-access-token:${{ secrets.CAREERS_DATA_TOKEN }}@github.com/ZenYukti/careers-data.git
 
-      - name: Update jobs database
+      - name: Collect jobs
         run: |
-          cp generated/jobs.json careers-data/jobs.json
+          uv run scripts/collect.py
 
       - name: Commit updated jobs database
         run: |
@@ -58,4 +52,5 @@ jobs:
           fi
 
           git commit -m "chore(data): update jobs database"
+
           git push
