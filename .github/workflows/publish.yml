@@ -3,6 +3,11 @@ name: Publish Jobs
 on:
   workflow_dispatch:
 
+  # not starting simultaneously bcz race condition will occur if both workflows try to push to careers-data at the same time.
+  
+  schedule:
+    - cron: "10 */6 * * *" # gives ingestion -> 10 mins to finish 
+
 jobs:
   publish:
     runs-on: ubuntu-latest

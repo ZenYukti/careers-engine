@@ -3,6 +3,9 @@ name: Ingest Jobs
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: "0 */6 * * *" # runs every 6 hrs
+
 jobs:
   ingest:
     runs-on: ubuntu-latest
