@@ -4,7 +4,12 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: "0 */6 * * *" # runs every 6 hrs
+  - cron: "30 4 * * *"   # 10:00 AM IST
+  - cron: "30 13 * * *"  # 7:00 PM IST
+
+  # github cron uses utc, 
+  # so, 10:00 AM IST -> 04:30 AM UTC
+  # and 07:00 PM IST -> 13:30 PM UTC
 
 jobs:
   ingest:

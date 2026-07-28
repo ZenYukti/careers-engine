@@ -5,8 +5,11 @@ on:
 
   # not starting simultaneously bcz race condition will occur if both workflows try to push to careers-data at the same time.
   
+  # gives ingestion -> 10 mins to finish 
+  
   schedule:
-    - cron: "10 */6 * * *" # gives ingestion -> 10 mins to finish 
+    - cron: "40 4 * * *"   # 10:10 AM IST
+    - cron: "40 13 * * *"  # 7:10 PM IST
 
 jobs:
   publish:
