@@ -23,6 +23,6 @@ def test_formatter() -> None:
     assert fields["Role Type"] == "Internship"
     assert fields["\u200b"] == "🔗 **[Apply Here](https://google.com)**"
 
-    assert embed.footer.text == "Powered by ZenYukti Jobs"
+    assert embed.footer.text == "Powered by ZenYukti"
 
     assert embed.color.value == 0x4285F4

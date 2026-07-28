@@ -94,6 +94,6 @@ class JobFormatter:
             inline=False,
         )
 
-        embed.set_footer(text="Powered by ZenYukti Jobs")
+        embed.set_footer(text="Powered by ZenYukti")
 
         return embed
