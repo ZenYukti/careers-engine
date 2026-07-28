@@ -23,6 +23,7 @@ class Job(BaseModel):
     eligibility: str | None = None
     stipend: str | None = None
     deadline: str | None = None
+    description: str | None = None
 
     priority: Priority = Priority.NORMAL
 

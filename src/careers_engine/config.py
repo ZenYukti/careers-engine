@@ -20,6 +20,8 @@ JOBS_FILE = DATA_DIR / "jobs.json"
 HISTORY_FILE = DATA_DIR / "history.json"
 CACHE_DIR = DATA_DIR / "cache"
 
+QUEUE_FILE = DATA_DIR / "queue.json"
+
 REQUEST_TIMEOUT = 20
 
 USER_AGENT = "ZenYukti Jobs/0.1 (https://github.com/ZenYukti/careers-engine)"

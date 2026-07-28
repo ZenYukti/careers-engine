@@ -73,6 +73,13 @@ class JobFormatter:
                 inline=False,
             )
 
+        if job.description:
+            embed.add_field(
+                name="Description",
+                value=job.description,
+                inline=False,
+            )
+
         # embed.add_field(
         #     name="🔗 Apply",
         #     value=f"[Apply Here]({job.apply_url})",

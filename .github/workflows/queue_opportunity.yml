@@ -1,0 +1,116 @@
+name: Queue Manual Opportunity
+
+on:
+  workflow_dispatch:
+    inputs:
+      company:
+        description: Company
+        required: true
+
+      role:
+        description: Role
+        required: true
+
+      location:
+        description: Location
+        required: true
+
+      apply_url:
+        description: Apply URL
+        required: true
+
+      employment_type:
+        description: Employment Type
+        required: true
+        type: choice
+        default: Internship
+        options:
+          - Internship
+          - New Grad
+          - Full Time
+
+      priority:
+        description: Priority
+        required: true
+        type: choice
+        default: Normal
+        options:
+          - Normal
+          - High
+
+      stipend:
+        description: Stipend
+        required: false
+
+      deadline:
+        description: Deadline
+        required: false
+
+      eligibility:
+        description: Eligibility
+        required: false
+      
+      description:
+        description: Additional information shown in Discord
+        required: false
+        
+jobs:
+  queue:
+    runs-on: ubuntu-latest
+
+    env:
+      DATA_DIR: careers-data
+
+      COMPANY: ${{ inputs.company }}
+      ROLE: ${{ inputs.role }}
+      LOCATION: ${{ inputs.location }}
+      APPLY_URL: ${{ inputs.apply_url }}
+      EMPLOYMENT_TYPE: ${{ inputs.employment_type }}
+      PRIORITY: ${{ inputs.priority }}
+      STIPEND: ${{ inputs.stipend }}
+      DEADLINE: ${{ inputs.deadline }}
+      ELIGIBILITY: ${{ inputs.eligibility }}
+      DESCRIPTION: ${{ inputs.description }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone careers-data
+        run: |
+          git clone \
+            --depth 1 \
+            https://x-access-token:${{ secrets.CAREERS_DATA_TOKEN }}@github.com/ZenYukti/careers-data.git
+
+      - name: Queue manual opportunity
+        run: |
+          uv run scripts/queue_opportunity.py
+
+      - name: Commit updated queue
+        run: |
+          cd careers-data
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add queue.json
+
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "No queue changes."
+            exit 0
+          fi
+
+          git commit -m "chore(queue): enqueue manual opportunity"
+
+          git push
