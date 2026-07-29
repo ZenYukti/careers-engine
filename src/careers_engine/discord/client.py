@@ -15,12 +15,25 @@ class DiscordClient(discord.Client):
 
         self.jobs = jobs
 
+    # async def on_ready(self) -> None:
+    #     print(f"Logged in as {self.user}")
+
+    #     guild = self.guilds[0]
+
+    #     channel = guild.get_channel(DISCORD_CHANNEL_ID)
+
     async def on_ready(self) -> None:
-        print(f"Logged in as {self.user}")
+        print("Entered on_ready()", flush=True)
+        print(f"Logged in as {self.user}", flush=True)
+        print(f"Guilds: {[g.name for g in self.guilds]}", flush=True)
 
         guild = self.guilds[0]
 
+        print(f"Selected guild: {guild.name}", flush=True)
+
         channel = guild.get_channel(DISCORD_CHANNEL_ID)
+
+        print(f"Channel: {channel}", flush=True)
 
         if not isinstance(channel, discord.TextChannel):
             raise RuntimeError("Configured Discord channel not found.")
@@ -31,6 +44,12 @@ class DiscordClient(discord.Client):
 
         await self.close()
 
+    # async def start_client(self) -> None:
+    #     """Start the Discord client."""
+    #     await self.start(DISCORD_TOKEN)
     async def start_client(self) -> None:
-        """Start the Discord client."""
+        print("Before start()", flush=True)
+
         await self.start(DISCORD_TOKEN)
+
+        print("After start()", flush=True)

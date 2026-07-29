@@ -22,12 +22,10 @@ class DiscordPublisher:
 
     async def publish(self, jobs: list[Job]) -> None:
         for index, job in enumerate(jobs, start=1):
-            print(f"Sending {index}")
+            print(f"Sending {index}", flush=True)
 
             embed = self.formatter.format(job)
 
             await self.channel.send(embed=embed)
 
-            print(f"Sent {index}")
-
-            break
+            print(f"Sent {index}", flush=True)
