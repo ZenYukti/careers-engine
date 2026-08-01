@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 from pathlib import Path
 
 import cairosvg
@@ -8,7 +9,9 @@ import httpx
 
 from careers_engine.company.slugs import COMPANY_SLUGS
 
-ICON_BASE_URL = "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons"
+ICON_BASE_URL = (
+    "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons"
+)
 
 OUTPUT_DIR = Path("assets/logos")
 
@@ -33,6 +36,8 @@ def download_logo(slug: str) -> bytes:
 
 
 def colorize_svg(svg: bytes) -> bytes:
+    """Render all logos in white for better visibility on Discord."""
+
     text = svg.decode("utf-8")
 
     text = text.replace(
@@ -65,6 +70,8 @@ def main() -> None:
     downloaded = 0
     skipped = 0
 
+    missing: list[tuple[str, str]] = []
+
     for company, slug in COMPANY_SLUGS.items():
         destination = OUTPUT_DIR / f"{slug}.png"
 
@@ -84,11 +91,35 @@ def main() -> None:
             print(f"✓ {company}")
 
         except Exception as exc:
+            missing.append((company, slug))
             print(f"✗ {company}: {exc}")
 
     print()
     print(f"Downloaded : {downloaded}")
     print(f"Skipped    : {skipped}")
+
+    if missing:
+        print()
+        print("=" * 60)
+        print("Missing logos:")
+        print()
+
+        for company, slug in missing:
+            print(f"  • {company:<15} -> {slug}")
+
+        print("=" * 60)
+
+    result = subprocess.run(
+        ["git", "diff", "--quiet", "--", "assets/logos"],
+    )
+
+    if result.returncode == 1:
+        print()
+        print("=" * 60)
+        print("Logo assets have changed.")
+        print("Remember to increment ASSETS_VERSION in config.py")
+        print("before committing so Discord refreshes cached logos.")
+        print("=" * 60)
 
 
 if __name__ == "__main__":
