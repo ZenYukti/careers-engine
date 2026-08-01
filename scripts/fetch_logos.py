@@ -9,13 +9,10 @@ import httpx
 
 from careers_engine.company.slugs import COMPANY_SLUGS
 
-
 # Official Simple Icons CDN.
 # Using jsDelivr avoids breakage caused by changes in the GitHub `develop` branch.
 
-ICON_BASE_URL = (
-    "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons"
-)
+ICON_BASE_URL = "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons"
 
 OUTPUT_DIR = Path("assets/logos")
 
@@ -113,15 +110,17 @@ def main() -> None:
 
         print("=" * 60)
 
-    result = subprocess.run(
+    working_tree = subprocess.run(
         ["git", "diff", "--quiet", "--", "assets/logos"],
     )
 
-    if result.returncode == 1:
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet", "--", "assets/logos"])
+
+    if working_tree.returncode == 1 or staged.returncode == 1:
         print()
         print("=" * 60)
         print("Logo assets have changed.")
-        print("Remember to increment ASSETS_VERSION in config.py")
+        print("Remember to increment LOGO_VERSION in config.py")
         print("before committing so Discord refreshes cached logos.")
         print("=" * 60)
 
