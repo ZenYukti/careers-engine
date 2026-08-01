@@ -24,7 +24,11 @@ class DiscordPublisher:
         for index, job in enumerate(jobs, start=1):
             print(f"Sending {index}", flush=True)
 
+            print(job.model_dump(), flush=True)
+
             embed = self.formatter.format(job)
+
+            print(embed.to_dict(), flush=True)
 
             await self.channel.send(embed=embed)
 
