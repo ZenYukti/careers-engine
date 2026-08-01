@@ -3,38 +3,9 @@ from __future__ import annotations
 import os
 
 from careers_engine.config import QUEUE_FILE
-from careers_engine.models import EmploymentType, Job
+from careers_engine.employment import parse_employment_type
+from careers_engine.models import Job
 from careers_engine.storage import JobDatabase
-
-EMPLOYMENT_TYPE_ALIASES = {
-    "internship": EmploymentType.INTERN,
-    "new grad": EmploymentType.NEW_GRAD,
-    "graduate": EmploymentType.NEW_GRAD,
-    "full time": EmploymentType.FULL_TIME,
-    "full-time": EmploymentType.FULL_TIME,
-    "fulltime": EmploymentType.FULL_TIME,
-    "contract": EmploymentType.CONTRACT,
-    "contractor": EmploymentType.CONTRACT,
-    "part time": EmploymentType.PART_TIME,
-    "part-time": EmploymentType.PART_TIME,
-    "apprenticeship": EmploymentType.APPRENTICESHIP,
-}
-
-
-def parse_employment_type(value: str) -> EmploymentType:
-    """Normalize user input into a supported employment type."""
-
-    key = value.strip().lower()
-
-    try:
-        return EMPLOYMENT_TYPE_ALIASES[key]
-    except KeyError as exc:
-        raise ValueError(
-            "Unsupported employment type: "
-            f"{value!r}. "
-            "Supported values include: Internship, New Grad, "
-            "Full Time, Part Time, Contract, Apprenticeship."
-        ) from exc
 
 
 def optional(value: str | None) -> str | None:

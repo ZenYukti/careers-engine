@@ -5,6 +5,7 @@ from careers_engine.config import (
     UPSTREAM_FILES,
     UPSTREAM_REPOSITORY,
 )
+from careers_engine.employment import infer_employment_type
 from careers_engine.models import Job
 from careers_engine.parsers import MarkdownTableParser
 from careers_engine.sources.base import BaseSource
@@ -41,6 +42,7 @@ class UpstreamSource(BaseSource):
                         role=row["role"],
                         location=row["location"],
                         apply_url=row["posting"],
+                        employment_type=infer_employment_type(row["role"]),
                     )
                 )
 
