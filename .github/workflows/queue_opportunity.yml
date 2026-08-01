@@ -1,4 +1,4 @@
-name: Queue Manual Opportunity
+name: Queue Opportunity
 
 on:
   workflow_dispatch:
@@ -28,6 +28,7 @@ on:
           - Internship
           - New Grad
           - Full Time
+          - Apprenticeship
 
       priority:
         description: Priority
