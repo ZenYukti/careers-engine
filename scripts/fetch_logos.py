@@ -9,8 +9,12 @@ import httpx
 
 from careers_engine.company.slugs import COMPANY_SLUGS
 
+
+# Official Simple Icons CDN.
+# Using jsDelivr avoids breakage caused by changes in the GitHub `develop` branch.
+
 ICON_BASE_URL = (
-    "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons"
+    "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons"
 )
 
 OUTPUT_DIR = Path("assets/logos")

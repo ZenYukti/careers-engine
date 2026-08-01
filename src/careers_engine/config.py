@@ -43,4 +43,4 @@ DISCORD_CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
 # i.e) new version ro new images are downloaded
 # syntax: 1.0 -> 2.0 -> 3.0 -> 4.0... so on
 
-LOGO_VERSION = "1.0"
+LOGO_VERSION = "2.0"
