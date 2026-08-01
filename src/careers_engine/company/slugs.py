@@ -1,46 +1,95 @@
 from __future__ import annotations
 
 COMPANY_SLUGS = {
+    # Big Tech
     "Google": "google",
     "Microsoft": "microsoft",
     "Amazon": "amazon",
-    "Meta": "meta",
     "Apple": "apple",
+    "Meta": "meta",
     "Netflix": "netflix",
-    "NVIDIA": "nvidia",
-    "Adobe": "adobe",
-    "Salesforce": "salesforce",
-    "Stripe": "stripe",
-    "Uber": "uber",
-    "Atlassian": "atlassian",
-    "Databricks": "databricks",
-    "Snowflake": "snowflake",
-    "Oracle": "oracle",
-    "Cisco": "cisco",
-    "Intel": "intel",
-    "AMD": "amd",
-    "Qualcomm": "qualcomm",
-    "Samsung": "samsung",
-    "Spotify": "spotify",
-    "Cloudflare": "cloudflare",
-    "MongoDB": "mongodb",
-    "GitLab": "gitlab",
-    "GitHub": "github",
+    # AI
     "OpenAI": "openai",
     "Anthropic": "anthropic",
     "Perplexity": "perplexity",
-    "TikTok": "tiktok",
-    "ByteDance": "bytedance",
-    "Rivian": "rivian",
-    "Tesla": "tesla",
-    "Airbnb": "airbnb",
-    "Dropbox": "dropbox",
-    "Pinterest": "pinterest",
-    "Reddit": "reddit",
-    "Discord": "discord",
-    "Canva": "canva",
-    "Twilio": "twilio",
+    # Cloud & Infrastructure
+    "Cloudflare": "cloudflare",
+    "Snowflake": "snowflake",
+    "Databricks": "databricks",
+    "MongoDB": "mongodb",
+    "Oracle": "oracle",
+    "DigitalOcean": "digitalocean",
+    "HashiCorp": "hashicorp",
+    "Docker": "docker",
+    "Redis": "redis",
+    "Elastic": "elastic",
+    # Developer Tools
+    "GitHub": "github",
+    "GitLab": "gitlab",
+    "Atlassian": "atlassian",
+    "JetBrains": "jetbrains",
+    "Vercel": "vercel",
+    "Netlify": "netlify",
+    # Hardware & Semiconductors
+    "NVIDIA": "nvidia",
+    "AMD": "amd",
+    "Intel": "intel",
+    "Qualcomm": "qualcomm",
+    "Samsung": "samsung",
+    # Enterprise Software
+    "Adobe": "adobe",
+    "Salesforce": "salesforce",
+    "IBM": "ibm",
+    "Cisco": "cisco",
+    # FinTech & Commerce
+    "Stripe": "stripe",
     "PayPal": "paypal",
     "Shopify": "shopify",
-    "IBM": "ibm",
+    "Coinbase": "coinbase",
+    # Mobility & Automotive
+    "Uber": "uber",
+    "Tesla": "tesla",
+    # Social Media & Communication
+    "Discord": "discord",
+    "Reddit": "reddit",
+    "TikTok": "tiktok",
+    "ByteDance": "bytedance",
+    "Pinterest": "pinterest",
+    "Spotify": "spotify",
+    "LinkedIn": "linkedin",
+    "Slack": "slack",
+    "Zoom": "zoom",
+    # Consumer & Productivity
+    "Airbnb": "airbnb",
+    "Dropbox": "dropbox",
+    "Canva": "canva",
+    "Notion": "notion",
+    "Figma": "figma",
+    "Linear": "linear",
+    "Asana": "asana",
+    # Indian Product Companies & Startups
+    "Flipkart": "flipkart",
+    "Razorpay": "razorpay",
+    "Swiggy": "swiggy",
+    "Zomato": "zomato",
+    "PhonePe": "phonepe",
+    "Postman": "postman",
+    "Zoho": "zoho",
+    "Unacademy": "unacademy",
+    "Paytm": "paytm",
+    # Companies awaiting Simple Icons support:
+    # - BrowserStack
+    # - Chargebee
+    # - Dream11
+    # - Freshworks
+    # - Groww
+    # - InMobi
+    # - Juspay
+    # - MakeMyTrip
+    # - Meesho
+    # - Myntra
+    # - Ola
+    # - Rivian
+    # - ShareChat
+    # - Urban Company
 }
