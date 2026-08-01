@@ -11,4 +11,4 @@ def get_logo_url(company: str) -> str | None:
     if slug is None:
         return None
 
-    return f"{LOGO_BASE_URL}/{slug}.png"
+    return f"{LOGO_BASE_URL}/{slug}.png?v=2"
