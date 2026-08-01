@@ -38,3 +38,9 @@ UPSTREAM_FILES = [
 DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN", "")
 
 DISCORD_CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
+
+# to be updated, when fetch_logos.py is run and assets/logos directory is updated
+# i.e) new version ro new images are downloaded
+# syntax: 1.0 -> 2.0 -> 3.0 -> 4.0... so on
+
+LOGO_VERSION = "3.0"

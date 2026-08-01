@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from careers_engine.company.slugs import COMPANY_SLUGS
+from careers_engine.config import LOGO_VERSION
 
 LOGO_BASE_URL = "https://raw.githubusercontent.com/ZenYukti/careers-engine/main/assets/logos"
 
@@ -11,4 +12,4 @@ def get_logo_url(company: str) -> str | None:
     if slug is None:
         return None
 
-    return f"{LOGO_BASE_URL}/{slug}.png?v=2"
+    return f"{LOGO_BASE_URL}/{slug}.png?v={LOGO_VERSION}"
