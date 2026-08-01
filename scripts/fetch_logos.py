@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
 
 import cairosvg
@@ -11,14 +10,6 @@ from careers_engine.company.slugs import COMPANY_SLUGS
 ICON_BASE_URL = "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons"
 
 OUTPUT_DIR = Path("assets/logos")
-
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--force",
-    action="store_true",
-    help="Re-download and regenerate existing logos.",
-)
-args = parser.parse_args()
 
 
 def download_logo(slug: str) -> bytes:
@@ -32,17 +23,6 @@ def download_logo(slug: str) -> bytes:
     return response.content
 
 
-def colorize_svg(svg: bytes) -> bytes:
-    text = svg.decode("utf-8")
-
-    text = text.replace(
-        "<path",
-        '<path fill="#F5F5F5"',
-    )
-
-    return text.encode("utf-8")
-
-
 def save_logo(slug: str, svg: bytes) -> None:
     OUTPUT_DIR.mkdir(
         parents=True,
@@ -51,13 +31,11 @@ def save_logo(slug: str, svg: bytes) -> None:
 
     destination = OUTPUT_DIR / f"{slug}.png"
 
-    svg = colorize_svg(svg)
-
     cairosvg.svg2png(
         bytestring=svg,
         write_to=str(destination),
-        output_width=128,
-        output_height=128,
+        output_width=64,
+        output_height=64,
     )
 
 
@@ -68,7 +46,7 @@ def main() -> None:
     for company, slug in COMPANY_SLUGS.items():
         destination = OUTPUT_DIR / f"{slug}.png"
 
-        if destination.exists() and not args.force:
+        if destination.exists():
             print(f"Skipping {company}")
             skipped += 1
             continue
@@ -87,6 +65,7 @@ def main() -> None:
             print(f"✗ {company}: {exc}")
 
     print()
+
     print(f"Downloaded : {downloaded}")
     print(f"Skipped    : {skipped}")
 
