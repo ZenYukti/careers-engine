@@ -1,0 +1,115 @@
+{
+  "theme": "maple",
+  "name": "careers-engine",
+  "colors": {
+    "primary": "#2563EB",
+    "light": "#4F7CFF",
+    "dark": "#1E40AF"
+  },
+  "logo": {
+    "light": "/docs/images/careers-engine-nav-bright-removebg-preview.png",
+    "dark": "/docs/images/careers-engine-nav-dark-removebg-preview.png",
+    "href": "https://github.com/ZenYukti/careers-engine"
+  },
+  "favicon": {
+    "light": "/docs/images/favicon.png",
+    "dark": "/docs/images/favicon.png"
+  },
+  "navbar": {
+    "links": [
+      {
+        "href": "https://go.zenyukti.in/discord",
+        "label": "Discord"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "GitHub",
+      "href": "https://github.com/ZenYukti/careers-engine"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/zenyukti",
+      "github": "https://github.com/ZenYukti/careers-engine",
+      "linkedin": "https://linkedin.com/company/zenyukti",
+      "discord": "https://go.zenyukti.in/discord"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "download-pdf"
+    ],
+    "display": "toc"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Inter",
+      "weight": 700
+    },
+    "body": {
+      "family": "Inter",
+      "weight": 400
+    }
+  },
+  "background": {
+    "color": {
+      "dark": "#0B1120"
+    }
+  },
+  "description": "Intelligent job aggregation and publishing platform powering ZenYukti Jobs. careers-engine discovers, enriches and publishes software engineering opportunities automatically.",
+  "variables": {
+    "project": "careers-engine",
+    "repository": "https://github.com/ZenYukti/careers-engine",
+    "organization": "ZenYukti",
+    "python": "3.12",
+    "package_manager": "uv"
+  },
+  "seo": {
+    "metatags": {
+      "application-name": "careers-engine",
+      "author": "ZenYukti",
+      "keywords": "careers-engine, jobs, internships, new grad, software engineering, discord, github actions, python, open source, zenyukti",
+      "robots": "index, follow",
+      "og:type": "website",
+      "og:site_name": "careers-engine",
+      "og:title": "careers-engine",
+      "og:description": "Intelligent job aggregation and publishing platform powering ZenYukti Jobs.",
+      "twitter:card": "summary_large_image",
+      "twitter:title": "careers-engine",
+      "twitter:description": "Discover, enrich and publish software engineering opportunities automatically."
+    }
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Docs",
+          "icon": "book-open-alt",
+          "color": {
+            "light": "#2563EB",
+            "dark": "#2563EB"
+          },
+          "href": "https://careers-engine.zenyukti.in/"
+        }
+      ]
+    },
+    "pages": [
+      "index"
+    ]
+  },
+  "styling": {
+    "eyebrows": "section"
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "interaction": {
+    "drilldown": false
+  }
+}
