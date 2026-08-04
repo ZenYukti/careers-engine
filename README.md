@@ -4,7 +4,15 @@
 
 careers-engine is an open source backend that continuously discovers software engineering opportunities, enriches them with additional metadata, and publishes them through automated workflows.
 
-The project was built to eliminate manual tracking of career pages and provide a reliable pipeline for delivering high quality opportunities to the community. It currently powers **ZenYukti Jobs**, while remaining modular enough to support additional sources, publishers, and workflows in the future.
+The project was built to eliminate manual tracking of career pages and provide a reliable pipeline for delivering high quality opportunities to the community. It currently powers **ZenYukti Jobs** ([Discord Bot]()), while remaining modular enough to support additional sources, publishers, and workflows in the future.
+
+---
+
+## Architecture
+
+![alt text](docs/images/careers-engine-architecture.png)
+
+live url: https://excalidraw.com/#json=foywzC6vYJtpt6wl_DKTE,T7vPnfxrNQHoC7OuYd6eAA
 
 ---
 
@@ -33,12 +41,6 @@ Uber        Airbnb        Flipkart    Razorpay   Zoho
 ```
 
 and so on...
-
----
-
-## Architecture
-
-> to be put soon
 
 ---
 
