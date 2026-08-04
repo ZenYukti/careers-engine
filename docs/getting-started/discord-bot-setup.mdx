@@ -1,0 +1,131 @@
+---
+title: "Discord Bot Setup"
+description: "Configure the Discord bot."
+---
+
+Before careers-engine can publish opportunities, it must be connected to a Discord bot with permission to send messages in your server.
+
+This guide walks through creating the bot, configuring the required permissions, and obtaining the credentials used by careers-engine.
+
+---
+
+## Create a Discord application
+
+Visit the Discord Developer Portal and create a new application.
+
+<Card
+title="Discord Developer Portal"
+icon="discord"
+href="https://discord.com/developers/applications"
+/>
+
+Choose a descriptive name for your application, such as **careers-engine**.
+
+---
+
+## Create a bot
+
+Inside your application, navigate to **Bot** and click **Add Bot**.
+
+After the bot has been created, copy its token.
+
+<Warning>
+Treat your bot token like a password. Never commit it to Git or share it publicly.
+</Warning>
+
+Store the token in your local `.env` file.
+
+```env
+DISCORD_TOKEN=your_bot_token
+```
+
+---
+
+## Enable gateway intents
+
+Under **Bot → Privileged Gateway Intents**, enable the intents required by the project.
+
+For most publishing workflows, the default intents are sufficient.
+
+Future versions of careers-engine may require additional intents depending on supported features.
+
+---
+
+## Invite the bot
+
+Navigate to **OAuth2 → URL Generator**.
+
+Select the following scopes.
+
+- Bot
+
+Select the following permissions.
+
+- View Channels
+- Send Messages
+- Embed Links
+- Attach Files
+- Read Message History
+
+Copy the generated URL and open it in your browser to invite the bot to your server.
+
+<Info>
+The bot must be invited to the server before it can publish opportunities.
+</Info>
+
+---
+
+## Obtain the channel ID
+
+Enable **Developer Mode** in Discord.
+
+Then:
+
+1. Right-click the destination channel.
+2. Select **Copy Channel ID**.
+
+Add the value to your environment configuration.
+
+```env
+DISCORD_CHANNEL_ID=123456789012345678
+```
+
+---
+
+## Verify the configuration
+
+Your `.env` file should now contain at least:
+
+```env
+DISCORD_TOKEN=...
+
+DISCORD_CHANNEL_ID=...
+
+DATA_DIR=../careers-data
+```
+
+---
+
+## Troubleshooting
+
+Common issues include:
+
+- Invalid bot token.
+- Missing channel permissions.
+- Bot not invited to the server.
+- Incorrect channel ID.
+- Bot role positioned below the target channel permissions.
+
+---
+
+## Next step
+
+The Discord bot is now configured.
+
+Continue with GitHub Actions to automate job discovery and publishing.
+
+<Card
+title="GitHub Actions"
+icon="github"
+href="/getting-started/github-actions"
+/>
