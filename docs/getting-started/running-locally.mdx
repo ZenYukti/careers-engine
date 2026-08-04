@@ -1,0 +1,85 @@
+---
+title: "Running Locally"
+description: "Run the project locally."
+---
+
+After installing and configuring careers-engine, the next step is to verify that your local environment is working correctly.
+
+This page walks through running the project locally before enabling automated publishing.
+
+---
+
+## Verify the installation
+
+Ensure all project dependencies have been installed successfully.
+
+```bash
+uv sync
+```
+
+If the command completes without errors, your local environment is ready.
+
+---
+
+## Verify the configuration
+
+Before executing any workflows, confirm that:
+
+- The `.env` file has been created.
+- The `careers-data` repository has been cloned.
+- Required environment variables are configured.
+- `DATA_DIR` points to the correct location.
+
+<Check>
+If any required configuration is missing, complete the previous step before continuing.
+</Check>
+
+---
+
+## Execute the project
+
+The exact command depends on the workflow you want to run.
+
+Throughout the documentation, all commands are executed from the repository root.
+
+```bash
+cd careers-engine
+```
+
+Individual workflow commands are covered in the relevant sections of the Developer Guide.
+
+---
+
+## Verify the output
+
+A successful execution should:
+
+- Complete without runtime errors.
+- Produce logs describing the executed workflow.
+- Read from or write to the `careers-data` repository when applicable.
+
+At this stage, publishing to Discord has not yet been configured.
+
+---
+
+## Troubleshooting
+
+If the project fails to start, verify:
+
+- Python version
+- Installed dependencies
+- Environment variables
+- Repository layout
+- File permissions
+
+---
+
+## Next step
+
+The project is now ready to be connected to Discord.
+
+<Card
+title="Discord Bot Setup"
+icon="discord"
+href="/getting-started/discord-bot-setup"
+/>
