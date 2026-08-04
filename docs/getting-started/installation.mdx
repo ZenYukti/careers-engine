@@ -1,0 +1,98 @@
+---
+title: "Installation"
+description: "Install the project locally."
+---
+
+This guide walks through setting up **careers-engine** for local development.
+
+By the end of this guide, you'll have the project cloned, dependencies installed, and be ready to configure your environment.
+
+---
+
+## Prerequisites
+
+Before installing careers-engine, ensure the following tools are available on your system.
+
+| Requirement | Version |
+|-------------|---------|
+| Python | 3.12 or newer |
+| Git | Latest |
+| uv | Latest |
+
+<Info>
+careers-engine uses <a href="https://docs.astral.sh/uv/" target="_blank">uv</a> for dependency management and virtual environments.
+</Info>
+
+---
+
+## Clone the repository
+
+Clone the repository and enter the project directory.
+
+```bash
+git clone https://github.com/ZenYukti/careers-engine.git
+
+cd careers-engine
+```
+
+If you plan to contribute, fork the repository first and clone your fork instead.
+
+---
+
+## Install dependencies
+
+Install all project dependencies.
+
+```bash
+uv sync
+```
+
+This command creates a virtual environment (if required) and installs every dependency defined by the project.
+
+---
+
+## Verify the installation
+
+Confirm that the environment has been created successfully.
+
+```bash
+uv run python --version
+```
+
+You should see Python 3.12 or later.
+
+You can also verify that the project dependencies were installed correctly.
+
+```bash
+uv run pytest --version
+```
+
+---
+
+## Project layout
+
+After installation, the repository structure should look similar to:
+
+```text
+careers-engine/
+├── docs/
+├── scripts/
+├── src/
+├── tests/
+├── pyproject.toml
+└── uv.lock
+```
+
+---
+
+## Next step
+
+The project is now installed.
+
+Continue with the configuration guide to configure environment variables, the Discord bot, and the required repositories.
+
+<Card
+  title="Configuration"
+  icon="gear"
+  href="/getting-started/configuration"
+/>
