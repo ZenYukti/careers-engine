@@ -1,0 +1,99 @@
+---
+title: "GitHub Actions"
+description: "Automate scheduled workflows."
+---
+
+careers-engine is designed to run without a dedicated server.
+
+All scheduled discovery and publishing tasks are executed through **GitHub Actions**, allowing the platform to periodically collect opportunities, update the companion repository, and publish newly discovered jobs.
+
+---
+
+## Scheduled workflows
+
+The project uses multiple GitHub Actions workflows to automate different stages of the pipeline.
+
+Typical responsibilities include:
+
+- Discovering new opportunities
+- Updating the `careers-data` repository
+- Publishing new opportunities to Discord
+- Processing manually queued opportunities
+
+Scheduled execution is configured directly within each workflow using standard GitHub Actions cron expressions.
+
+---
+
+## Required repository secrets
+
+Several workflows require repository secrets to authenticate with external services.
+
+| Secret | Purpose |
+|---------|---------|
+| `DISCORD_TOKEN` | Discord bot authentication |
+| `DISCORD_CHANNEL_ID` | Destination Discord channel |
+| `CAREERS_DATA_TOKEN` | Push updates to the `careers-data` repository |
+
+Additional secrets may be introduced as new workflows or integrations are added.
+
+<Warning>
+Never commit secrets to the repository. Configure them through the repository's **Settings → Secrets and variables → Actions**.
+</Warning>
+
+---
+
+## Workflow execution
+
+Most workflows support two execution modes.
+
+### Scheduled execution
+
+Runs automatically according to the configured cron schedule.
+
+Suitable for production deployments.
+
+### Manual execution
+
+Can be triggered from the GitHub Actions interface using **Run workflow**.
+
+Useful when testing new sources or verifying recent changes.
+
+---
+
+## Monitoring workflow runs
+
+Every workflow execution is recorded under the repository's **Actions** tab.
+
+For each run you can inspect:
+
+- Workflow logs
+- Step execution
+- Generated artifacts
+- Failure messages
+- Execution duration
+
+Monitoring workflow runs is the quickest way to diagnose configuration or publishing issues.
+
+---
+
+## Common issues
+
+The most common workflow failures are caused by:
+
+- Missing repository secrets
+- Invalid Discord credentials
+- Insufficient repository permissions
+- Authentication failures when accessing `careers-data`
+- Temporary network failures while collecting jobs
+
+---
+
+## Next step
+
+With GitHub Actions configured, you're ready to publish your first opportunity.
+
+<Card
+title="First Publish"
+icon="paper-plane"
+href="/getting-started/first-publish"
+/>
