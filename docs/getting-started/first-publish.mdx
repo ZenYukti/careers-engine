@@ -1,0 +1,85 @@
+---
+title: "First Publish"
+description: "Publish your first opportunity."
+---
+
+This guide verifies that your careers-engine deployment is configured correctly by walking through a complete publishing cycle.
+
+By the end of this guide, you should have successfully published an opportunity to your Discord server.
+
+---
+
+## Before you begin
+
+Ensure you have completed the previous guides.
+
+- Installation
+- Configuration
+- Running Locally
+- Discord Bot Setup
+- GitHub Actions
+
+---
+
+## Trigger a workflow
+
+Navigate to the repository's **Actions** tab and manually trigger the appropriate workflow.
+
+Wait for the workflow to complete successfully.
+
+---
+
+## Verify the workflow
+
+Confirm that:
+
+- All workflow steps completed successfully.
+- No errors were reported.
+- The workflow updated the `careers-data` repository when required.
+
+---
+
+## Verify the published message
+
+Open the configured Discord channel.
+
+A successful run should produce a message similar to:
+
+<Image
+src="/docs/images/deployment.png"
+alt="Published Discord opportunity"
+/>
+
+The published message should include:
+
+- Company name
+- Job title
+- Employment type
+- Location
+- Application link
+- Company branding
+
+---
+
+## Troubleshooting
+
+If no message appears:
+
+- Verify the workflow completed successfully.
+- Confirm the bot has permission to send messages.
+- Ensure the configured channel ID is correct.
+- Review the workflow logs for errors.
+
+---
+
+## What's next?
+
+Your careers-engine deployment is now operational.
+
+Continue with the Architecture section to understand how opportunities move through the platform.
+
+<Card
+title="Architecture Overview"
+icon="diagram-project"
+href="/architecture/overview"
+/>

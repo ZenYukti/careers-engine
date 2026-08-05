@@ -85,24 +85,84 @@
       "twitter:description": "Discover, enrich and publish software engineering opportunities automatically."
     }
   },
-  "navigation": {
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Docs",
-          "icon": "book-open-alt",
-          "color": {
-            "light": "#2563EB",
-            "dark": "#2563EB"
-          },
-          "href": "https://careers-engine.zenyukti.in/"
-        }
-      ]
-    },
-    "pages": [
-      "index"
+"navigation": {
+  "global": {
+    "anchors": [
+      {
+        "anchor": "Docs",
+        "icon": "book-open-alt",
+        "color": {
+          "light": "#2563EB",
+          "dark": "#2563EB"
+        },
+        "href": "https://careers-engine.zenyukti.in"
+      }
     ]
   },
+
+  "groups": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "getting-started/introduction",
+        "getting-started/installation",
+        "getting-started/configuration",
+        "getting-started/running-locally",
+        "getting-started/discord-bot-setup",
+        "getting-started/github-actions",
+        "getting-started/first-publish"
+      ]
+    },
+
+    {
+      "group": "Architecture",
+      "pages": [
+        "architecture/overview",
+        "architecture/ingestion-pipeline",
+        "architecture/publishing-pipeline",
+        "architecture/storage",
+        "architecture/company-branding",
+        "architecture/employment-inference",
+        "architecture/repository-layout"
+      ]
+    },
+
+    {
+      "group": "Developer Guide",
+      "pages": [
+        "developer-guide/contributing",
+        "developer-guide/adding-source",
+        "developer-guide/adding-company",
+        "developer-guide/adding-logo",
+        "developer-guide/adding-employment-rule",
+        "developer-guide/testing",
+        "developer-guide/release-process"
+      ]
+    },
+
+    {
+      "group": "Reference",
+      "pages": [
+        "reference/configuration",
+        "reference/environment-variables",
+        "reference/json-schema",
+        "reference/cli",
+        "reference/workflows"
+      ]
+    },
+
+    {
+      "group": "API",
+      "pages": [
+        "api/models",
+        "api/storage",
+        "api/parsers",
+        "api/discord",
+        "api/sources"
+      ]
+    }
+  ]
+},
   "styling": {
     "eyebrows": "section"
   },

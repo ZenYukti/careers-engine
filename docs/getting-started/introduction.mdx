@@ -1,0 +1,142 @@
+---
+title: "Introduction"
+description: "Discover careers-engine."
+---
+
+<img 
+  src="/docs/images/favicon.png" 
+  alt="ZenYukti-Jobs-logo"
+  style={{height: "150px", width: "150px"}}
+  className="rounded-lg"
+/>
+
+# careers-engine
+
+**careers-engine** is an open source platform for discovering, normalizing, and publishing software engineering opportunities from leading technology companies.
+
+It continuously collects opportunities from supported career sources, filters and enriches the data, stores a versioned job database, and publishes newly discovered opportunities to Discord communities through an automated publishing pipeline.
+
+The project powers **ZenYukti Jobs** but can also be self hosted and customized for any community, organization, or server.
+
+<CardGroup cols={2}>
+  <Card
+    title="Getting Started"
+    icon="rocket"
+    href="/getting-started/installation"
+  >
+    Set up careers-engine and publish your first opportunity.
+  </Card>
+
+  <Card
+    title="Architecture"
+    icon="diagram-project"
+    href="/architecture/overview"
+  >
+    Learn how opportunities move from career pages to Discord.
+  </Card>
+
+  <Card
+    title="Developer Guide"
+    icon="code"
+    href="/developer-guide/contributing"
+  >
+    Extend careers-engine with new sources and functionality.
+  </Card>
+
+  <Card
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/ZenYukti/careers-engine"
+  >
+    Browse the source code, report issues, and contribute.
+  </Card>
+</CardGroup>
+
+---
+
+## Why careers-engine?
+
+Many communities rely on manually tracking company career pages and sharing opportunities one by one. As the number of supported companies grows, this process quickly becomes difficult to maintain.
+
+careers-engine automates the complete workflow.
+
+Instead of manually checking dozens of career portals every day, the platform continuously discovers new opportunities, stores them in a structured database, detects newly published jobs, and distributes them automatically.
+
+---
+
+## Key capabilities
+
+- Discover opportunities from major technology companies and engineering focused organizations.
+- Normalize data from multiple career sources into a common format.
+- Maintain a version controlled job database through the [`careers-data`](https://github.com/zenyukti/careers-data/) repository.
+- Publish newly discovered opportunities to Discord automatically.
+- Support manual opportunity publishing through a review queue.
+- Apply company branding and employment type inference before publishing.
+- Run entirely through scheduled GitHub Actions with no dedicated server required.
+
+---
+
+## High level workflow
+
+```text
+Supported Career Sources
+            │
+            ▼
+      Collect Jobs
+            │
+            ▼
+ Normalize & Enrich Data
+            │
+            ▼
+      careers-data
+            │
+            ▼
+ Detect New Opportunities
+            │
+            ▼
+ Publish to Discord
+```
+
+A more detailed walkthrough of each stage is available in the **Architecture** section.
+
+---
+
+## Technology stack
+
+careers-engine is built using modern, lightweight tooling.
+
+| Component | Technology |
+|-----------|------------|
+| Language | [Python 3](https://docs.python.org/3/) |
+| Package manager | [uv](https://docs.astral.sh/uv/) |
+| Automation | [GitHub Actions](https://docs.github.com/en/actions) |
+| Storage | JSON ([`careers-data`](https://github.com/zenYukti/careers-data/)) |
+| Delivery | [Discord Bot API](https://docs.discord.com/developers/bots/overview) |
+| Documentation | [Mintlify](https://www.mintlify.com/docs) |
+
+---
+
+## Repository layout
+
+```text
+careers-engine/
+├── docs/
+├── scripts/
+├── src/
+├── .github/workflows/
+└── ...
+```
+
+Project structure and responsibilities are documented in **Architecture → Repository Layout**.
+
+---
+
+## Next steps
+
+If you're new to the project, continue with the installation guide to set up careers-engine locally.
+
+<Card
+  title="Installation"
+  icon="arrow-right"
+  href="/getting-started/installation"
+/>
