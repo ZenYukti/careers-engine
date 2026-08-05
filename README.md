@@ -1,10 +1,8 @@
-<center>
-
 <picture>
   <source srcset="docs/images/careers-engine-nav-dark-removebg-preview.png" media="(prefers-color-scheme: dark)">
   <source srcset="docs/images/careers-engine-nav-bright-removebg-preview.png" media="(prefers-color-scheme: light)">
   <!-- following is for a fallback; if mode (dark/bright) fails to fetch & load -->
-  <img src="docs/images/careers-engine-nav-bright.png" alt="Ayush Hardeniya Banner" style="width:100%; border-radius:10px;" />
+  <img src="docs/images/careers-engine-nav-bright.png" alt="careers-engine-banner" style="width:100%; border-radius:10px;" />
 </picture>
 
 <p align="center">
@@ -27,9 +25,13 @@
 </a>
 </p>
 
-[Docs](https://careers-engine.zenyukti.in) • [Contributing](CONTRIBUTING.md) • [License](LICENSE)
-
-</center>
+<p align="center">
+  <a href="https://careers-engine.zenyukti.in">Docs</a>
+  •
+  <a href="CONTRIBUTING.md">Contributing</a>
+  •
+  <a href="LICENSE">License</a>
+</p>
 
 ---
 
