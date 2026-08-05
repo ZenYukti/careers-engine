@@ -1,53 +1,92 @@
-# careers-engine
+<center>
 
-> Intelligent job aggregation and publishing platform powering **ZenYukti Jobs**.
+<picture>
+  <source srcset="docs/images/careers-engine-nav-dark-removebg-preview.png" media="(prefers-color-scheme: dark)">
+  <source srcset="docs/images/careers-engine-nav-bright-removebg-preview.png" media="(prefers-color-scheme: light)">
+  <!-- following is for a fallback; if mode (dark/bright) fails to fetch & load -->
+  <img src="docs/images/careers-engine-nav-bright.png" alt="Ayush Hardeniya Banner" style="width:100%; border-radius:10px;" />
+</picture>
 
-careers-engine is an open source backend that continuously discovers software engineering opportunities, enriches them with additional metadata, and publishes them through automated workflows.
+<p align="center">
+  <strong>
+    Intelligent job aggregation and publishing platform powering ZenYukti Jobs on
+    <a href="https://go.zenyukti.in/discord">Discord</a>.
+  </strong>
+</p>
 
-The project was built to eliminate manual tracking of career pages and provide a reliable pipeline for delivering high quality opportunities to the community. It currently powers **ZenYukti Jobs** ([Discord Bot]()), while remaining modular enough to support additional sources, publishers, and workflows in the future.
+<p align="center">
+  <a href="https://careers-engine.zenyukti.in">
+    <img src="https://img.shields.io/badge/Documentation-Live-2563EB?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-16A34A?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License">
+  </a>
+  <img src="https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.12+">
+  <a href="https://github.com/ZenYukti">
+  <img src="https://img.shields.io/badge/ZenYukti-Ecosystem-7C3AED?style=for-the-badge" alt="ZenYukti Ecosystem">
+</a>
+</p>
+
+[Docs](https://careers-engine.zenyukti.in) • [Contributing](CONTRIBUTING.md) • [License](LICENSE)
+
+</center>
+
+---
+
+## Overview
+
+**careers-engine** is an open source backend that continuously discovers software engineering opportunities, normalizes and enriches the collected data, and publishes newly discovered opportunities through automated workflows.
+
+The project eliminates manual tracking of company career pages by providing a reproducible pipeline for job discovery, storage, and publishing. It currently powers **ZenYukti Jobs**, while remaining modular enough to support additional sources, publishers, and deployment environments.
 
 ---
 
 ## Architecture
 
-![alt text](docs/images/careers-engine-architecture.png)
+![careers-engine Architecture](docs/images/careers-engine-architecture.png)
 
-live url: https://excalidraw.com/#json=foywzC6vYJtpt6wl_DKTE,T7vPnfxrNQHoC7OuYd6eAA
+**Interactive architecture diagram**:
+
+https://excalidraw.com/#json=foywzC6vYJtpt6wl_DKTE,T7vPnfxrNQHoC7OuYd6eAA
+
+For a detailed explanation of the system architecture and individual components, see the [project documentation](https://careers-engine.zenyukti.in/architecture/overview).
 
 ---
 
 ## Features
 
-- Automated job ingestion from upstream repositories
-- Manual opportunity queue for curated postings
-- Company branding with logos and accent colors
+- Automated job discovery from supported career sources
+- Intelligent normalization and metadata enrichment
 - Employment type inference
+- Company branding with logos and accent colors
 - Duplicate detection and publish history
-- Scheduled automation with GitHub Actions
-- Modular source, parser, and publisher architecture
-- Comprehensive test suite with static analysis
+- Automated Discord publishing
+- GitHub Actions based automation
+- Extensible source, parser, and publisher architecture
+- Comprehensive testing and static analysis
 
 ---
 
-**careers-engine** continuously tracks software engineering opportunities from leading technology companies, including FAANG, enterprise software vendors, AI companies, cloud providers, and high-growth startups.
+## Supported Companies
 
-Some of the companies currently covered include:
+The platform currently tracks software engineering opportunities from leading technology companies, including:
 
-```text
-Google      Microsoft     Amazon      Apple      Meta
-NVIDIA      OpenAI        Anthropic   Stripe     Databricks
-Cloudflare  GitHub        Atlassian   Adobe      Salesforce
-Uber        Airbnb        Flipkart    Razorpay   Zoho
-```
+Google • Microsoft • Amazon • Apple • Meta
 
-and so on...
+NVIDIA • OpenAI • Anthropic • Stripe • Databricks
+
+Cloudflare • GitHub • Atlassian • Adobe • Salesforce
+
+Uber • Airbnb • Flipkart • Razorpay • Zoho
+
+…and many more.
 
 ---
 
 ## Technology Stack
 
 | Component | Technology |
-|-----------|------------|
+| ---------- | ---------- |
 | Language | Python 3.12 |
 | Package Management | uv |
 | CI/CD | GitHub Actions |
@@ -55,25 +94,8 @@ and so on...
 | Publisher | Discord API |
 | Assets | Simple Icons |
 | Testing | pytest |
-| Formatting & Linting | Ruff |
+| Linting | Ruff |
 | Type Checking | mypy |
-
----
-
-## Repository Structure
-
-```text
-.
-├── assets/                 Company logos and static assets
-├── docs/                   Project documentation
-├── scripts/                CLI utilities and automation entrypoints
-├── src/
-│   └── careers_engine/     Core application
-├── tests/                  Automated test suite
-├── .github/workflows/      CI and scheduled workflows
-├── pyproject.toml
-└── README.md
-```
 
 ---
 
@@ -85,146 +107,45 @@ and so on...
 - uv
 - Git
 
-The project is primarily developed and tested on Ubuntu, but should work on any platform supported by Python and uv.
-
-### Clone the repository
+Clone the repository.
 
 ```bash
 git clone https://github.com/ZenYukti/careers-engine.git
 cd careers-engine
 ```
 
-### Install dependencies
+Install project dependencies.
 
 ```bash
 uv sync
 ```
 
----
-
-## Configuration
-
-Create a `.env` file containing the required environment variables.
-
-```env
-DISCORD_TOKEN=
-DISCORD_CHANNEL_ID=
-CAREERS_DATA_TOKEN=
-```
-
-Additional configuration options are documented in the project documentation.
-
----
-
-## Running Locally
-
-Collect opportunities from upstream sources.
-
-```bash
-uv run scripts/collect.py
-```
-
-Publish unpublished opportunities.
-
-```bash
-uv run scripts/publish.py
-```
-
-Queue a manual opportunity.
-
-```bash
-uv run scripts/queue_opportunity.py
-```
-
-Run all quality checks.
-
-```bash
-make check
-```
-
----
-
-## GitHub Actions
-
-The project uses GitHub Actions to automate ingestion, publishing, and manual queue management.
-
-### Ingest Jobs
-
-Runs on a schedule (currently twice daily) or can be triggered manually.
-
-```text
-Upstream Sources
-        │
-        ▼
-Collect Opportunities
-        │
-        ▼
-Update careers-data/jobs.json
-```
-
-### Publish Jobs
-
-Publishes only previously unpublished opportunities.
-
-```text
-careers-data
-      │
-      ▼
-Compare against publish history
-      │
-      ▼
-Generate Discord embeds
-      │
-      ▼
-Publish to ZenYukti Jobs
-```
-
-### Queue Opportunity
-
-Allows maintainers to add curated opportunities without modifying the source repositories.
-
-```text
-GitHub Actions
-      │
-      ▼
-Queue Opportunity
-      │
-      ▼
-queue.json
-```
+See the [project documentation](https://careers-engine.zenyukti.in/getting-started/) to get started.
 
 ---
 
 ## Documentation
 
-Project documentation is maintained alongside the source code in the `docs/` directory.
+Project documentation is available at **https://careers-engine.zenyukti.in**.
 
-The long term documentation site will be available at:
-
-**https://careers-engine.zenyukti.in**
-
-Documentation will include:
-
-- Getting Started
-- Architecture
-- Developer Guide
-- Configuration
-- Workflows
-- API Reference
-- Contribution Guide
+The documentation is maintained under the `docs/` directory and is powered by [Mintlify](https://mintlify.com).
 
 ---
 
-## Roadmap
+## Repository Structure
 
-Current focus areas include:
-
-- Additional upstream sources
-- More publishing platforms
-- Richer company branding
-- Production documentation
-- Public API
-- Web dashboard
+```text
+.
+├── assets/                 Static assets
+├── docs/                   Project documentation
+├── scripts/                CLI utilities and automation
+├── src/
+│   └── careers_engine/     Core application
+├── tests/                  Test suite
+├── .github/workflows/      CI and scheduled workflows
+├── pyproject.toml
+└── README.md
+```
 
 ---
 
@@ -232,10 +153,19 @@ Current focus areas include:
 
 Contributions, bug reports, and feature requests are welcome.
 
-See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the development workflow and contribution guidelines.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ---
 
 ## License
 
-This project is licensed under the **[MIT License](LICENSE)**.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+---
+
+<p align="center">
+  <a href="https://zenyukti.in">
+    <img src="https://img.shields.io/badge/Maintained%20by-ZenYukti-2563EB?style=for-the-badge" alt="Maintained by ZenYukti">
+  </a>
+</p>
