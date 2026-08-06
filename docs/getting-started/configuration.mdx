@@ -54,8 +54,16 @@ The project requires several environment variables to access external services a
 DISCORD_TOKEN=...
 DISCORD_CHANNEL_ID=...
 
+DISCORD_GUILD_ID=...
+
 DATA_DIR=../careers-data
 ```
+<Card type="warning" title="Single Server Deployment">
+-
+`DISCORD_GUILD_ID` restricts the bot to a single Discord server. If the bot joins any other server, it automatically leaves and publishes opportunities only to the configured guild.
+</Card>
+
+{/* (-) before the `DISCORD_BUILD_ID` is used for one line ga between titl and content, veirfied using `mint dev` */}
 
 Additional variables may be required depending on the workflow being executed.
 
@@ -74,8 +82,9 @@ workspace/
 │   └── src/
 │
 └── careers-data/
-    ├── data/
-    ├── queue/
+    ├── data.json
+    ├── queue.json
+    ├── history.json
     └── ...
 ```
 
