@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import discord
 
-from careers_engine.config import DISCORD_CHANNEL_ID, DISCORD_TOKEN, DISCORD_GUILD_ID
+from careers_engine.config import DISCORD_CHANNEL_ID, DISCORD_GUILD_ID, DISCORD_TOKEN
 from careers_engine.discord.publisher import DiscordPublisher
 from careers_engine.models import Job
 
@@ -21,20 +21,16 @@ class DiscordClient(discord.Client):
         # clean up existing guilds
         for guild in self.guilds:
             if guild.id != DISCORD_GUILD_ID:
-                print(
-                    f"Leaving unauthorized guild: "
-                    f"{guild.name} ({guild.id})"
-                )
+                print(f"Leaving unauthorized guild: {guild.name} ({guild.id})")
 
                 await guild.leave()
 
-        guild = self.get_guild(DISCORD_GUILD_ID)
-        if guild is None:
-            raise RuntimeError(
-                "Configured Discord guild not found."
-            )
+        target_guild = self.get_guild(DISCORD_GUILD_ID)
 
-        channel = guild.get_channel(DISCORD_CHANNEL_ID)
+        if target_guild is None:
+            raise RuntimeError("Configured Discord guild not found.")
+
+        channel = target_guild.get_channel(DISCORD_CHANNEL_ID)
 
         if not isinstance(channel, discord.TextChannel):
             raise RuntimeError("Configured Discord channel not found.")
@@ -49,16 +45,13 @@ class DiscordClient(discord.Client):
         """Leave unauthorized guilds."""
 
         if guild.id != DISCORD_GUILD_ID:
-            print(
-                f"Leaving unauthorized guild "
-                f"{guild.name} ({guild.id})"
-            )
+            print(f"Leaving unauthorized guild {guild.name} ({guild.id})")
 
             await guild.leave()
 
     async def start_client(self) -> None:
         """Start the Discord client."""
-        
+
         if DISCORD_GUILD_ID == 0:
             raise RuntimeError("DISCORD_GUILD_ID is not configured.")
 
