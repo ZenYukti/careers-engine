@@ -1,8 +1,88 @@
 ---
 title: "Employment Inference"
-description: "How careers-engine classifies employment type."
+description: "How Careers Engine determines employment categories for normalized job opportunities."
 ---
 
-Documentation for this section is currently under development.
+# Employment Inference
 
-This page will explain how careers-engine infers whether a role is internship, new grad, or full time.
+Career listings use different titles and conventions to describe employment types. One source may explicitly label a position as an internship, while another may describe it through the role title or other listing metadata.
+
+Employment inference provides a way to determine a normalized employment category from the information available to Careers Engine.
+
+This logic belongs to the data-processing layer rather than to individual source adapters or publishing components.
+
+## Why Employment Inference Matters
+
+A common employment category makes job records more consistent across sources. It also gives downstream components a predictable field to use without interpreting every source's original representation.
+
+The canonical `Job` model includes an `employment_type` field, with `EmploymentType.INTERN` as its default value.
+
+The model therefore provides a consistent representation for employment classification, while inference rules can be extended as source coverage and requirements evolve.
+
+## How It Fits into the Pipeline
+
+Employment classification is part of transforming source-specific listings into normalized job records.
+
+1. A source adapter retrieves listing data.
+2. The relevant parser extracts job fields.
+3. Employment information is interpreted according to the application's classification rules.
+4. The resulting category is represented in the canonical `Job` model.
+5. Downstream components consume the normalized record.
+
+The key design principle is that downstream components should work with a common employment category instead of repeatedly interpreting source-specific values.
+
+## Employment Categories
+
+The supported categories are defined by the application's `EmploymentType` model.
+
+The category assigned to a listing depends on the information available to the implementation. Explicit source metadata can provide a direct classification, while title-based or other rule-based inference may be used where supported.
+
+Classification should not assume that every listing provides complete or unambiguous employment information.
+
+## Rule-Based Classification
+
+Employment classification rules provide a maintainable way to handle differences in how sources describe opportunities.
+
+Keeping these rules separate from source retrieval and message formatting makes it possible to refine classification behavior without redesigning the ingestion or publishing pipeline.
+
+When adding or modifying a rule, consider:
+
+- Which source fields the rule evaluates.
+- Whether the match is sufficiently specific.
+- Whether the rule conflicts with existing classifications.
+- What happens when the available information is incomplete.
+- Whether the behavior is covered by tests.
+
+Rules should be evaluated against representative listings to avoid assigning incorrect categories based on broad or ambiguous matches.
+
+The employment inference logic is implemented in [`employment.py`](https://github.com/ZenYukti/careers-engine/blob/main/src/careers_engine/employment.py). It evaluates job titles against configured keyword groups and returns the corresponding `EmploymentType`.
+
+The current rules check for internship, new-graduate, apprenticeship, and contract keywords, in that order. If no rule matches, the function defaults to `FULL_TIME`.
+
+See the [`infer_employment_type()` implementation](https://github.com/ZenYukti/careers-engine/blob/main/src/careers_engine/employment.py#L70) for the exact matching behavior.
+
+## Extending Employment Rules
+
+New classification behavior should follow the conventions of the existing implementation rather than introducing source-specific logic throughout the application.
+
+Use the [Adding an Employment Rule](/developer-guide/adding-employment-rule) guide for implementation instructions.
+
+Tests should cover both matching listings and cases that must not match. This is particularly important when rules rely on job titles or keywords that can appear in unrelated contexts.
+
+## Limitations and Future Considerations
+
+Employment inference depends on the quality and completeness of upstream listing data. Ambiguous titles and inconsistent source metadata can make classification difficult.
+
+As additional sources and employment categories are introduced, the rule set may need broader test coverage and more explicit handling of conflicting or missing information.
+
+The goal is consistent classification, not to infer details that the available listing data cannot support.
+
+## Next step
+
+Employment inference standardizes the employment category represented in job records. Continue with Repository Layout to understand how the application code, tests, documentation, workflows, and persistent data are organized.
+
+<Card
+  title="Repository Layout"
+  icon="arrow-right"
+  href="/architecture/repository-layout"
+/>
