@@ -16,8 +16,19 @@ DATA_DIR = Path(
     )
 )
 
+# JOBS_FILE = DATA_DIR / "jobs.json"
+# HISTORY_FILE = DATA_DIR / "history.json"
+# CACHE_DIR = DATA_DIR / "cache"
+
+# Update the directory structure of careers-data; these variables
+# have been modified accordingly.
+# TODO: Remove the above comments after the Telegram publishing
+# channel is confirmed working with GitHub Actions workflows.
+
 JOBS_FILE = DATA_DIR / "jobs.json"
-HISTORY_FILE = DATA_DIR / "history.json"
+DELIVERY_HISTORY_DIR = DATA_DIR / "delivery-history"
+DISCORD_HISTORY_FILE = DELIVERY_HISTORY_DIR / "discord.json"
+TELEGRAM_HISTORY_FILE = DELIVERY_HISTORY_DIR / "telegram.json"
 CACHE_DIR = DATA_DIR / "cache"
 
 QUEUE_FILE = DATA_DIR / "queue.json"
