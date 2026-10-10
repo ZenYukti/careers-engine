@@ -1,8 +1,91 @@
 ---
 title: "Company Branding"
-description: "Applying company-specific branding."
+description: "How Careers Engine resolves company logos and applies consistent branding to published opportunities."
 ---
 
-Documentation for this section is currently under development.
+# Company Branding
 
-This page will explain how careers-engine resolves company names, logos, and visual metadata before publishing.
+Company branding provides a consistent visual identity for career opportunities published by Careers Engine.
+
+Listings collected from different sources may refer to the same company using different naming conventions. The branding layer centralizes company-specific logo information and provides reusable helpers for resolving logos during message formatting.
+
+This keeps branding logic separate from source adapters, parsers, and the publishing pipeline.
+
+<Card title="Supported Companies Glimpse" img="/images/companies-supported.png">
+  This list is not limited to these few only companies. Find more [here](https://github.com/ZenYukti/careers-engine/blob/main/src/careers_engine/company/slugs.py).
+</Card>
+
+## Company Logo Registry
+
+Careers Engine maintains a company logo registry that maps supported company names to their corresponding branding assets.
+
+Instead of embedding logo-selection logic directly into the Discord publisher, the registry provides a centralized place to maintain company-to-logo mappings.
+
+This approach makes it easier to add or update company branding without changing the ingestion pipeline or the general message-formatting logic.
+
+## Logo Assets
+
+Company logo assets are maintained separately from the core processing logic.
+
+The asset pipeline provides a consistent location for managing logo files, while branding helpers resolve the appropriate logo for a company during publication.
+
+Keeping assets separate from application logic makes the registry easier to maintain and allows branding updates to be handled independently of source integrations.
+
+## Logo Resolution
+
+When a job is prepared for publication, the branding helpers resolve the company's logo using the available company information and registry.
+
+The resulting branding information can then be used by the Discord message formatter.
+
+The conceptual flow is:
+
+1. Read the company name from the normalized job record.
+2. Resolve the corresponding logo through the branding helpers.
+3. Use the resolved logo when constructing the publication message.
+4. Continue formatting and delivering the opportunity through the publishing pipeline.
+
+The branding layer does not fetch job listings, determine eligibility, or manage publication history. Those responsibilities remain with their respective components.
+
+## Separation of Responsibilities
+
+The branding implementation follows the same modular approach as the rest of Careers Engine.
+
+| Component | Responsibility |
+| --- | --- |
+| Job model | Provides the company information associated with an opportunity. |
+| Company logo registry | Maintains company-to-logo mappings. |
+| Branding helpers | Encapsulate logo resolution for reuse by publishing components. |
+| Message formatter and publisher | Construct and deliver the formatted opportunity. |
+| Logo assets | Provide the visual resources used in publication messages. |
+
+This separation avoids coupling company-specific presentation rules to individual source adapters or parsers.
+
+## Extending Company Branding
+
+To add branding for another company, update the logo assets and registry using the conventions established by the existing implementation.
+
+When adding a mapping, ensure that the company name used by the registry matches the form supplied to the resolver. If the application normalizes company names before lookup, follow that normalization behavior rather than introducing a separate convention.
+
+Branding changes should be tested against the logo-resolution helpers and, where appropriate, the generated Discord message.
+
+For implementation-specific instructions, see the [Adding a Logo](/developer-guide/adding-logo) developer guide.
+
+## Limitations and Future Considerations
+
+Logo resolution depends on the registry covering the relevant company and on its assets being available in the expected location.
+
+Companies without a matching entry may not receive their intended branding. Variations in company names can also affect lookup results if they are not handled by the current resolver.
+
+Potential improvements include broader registry coverage, more consistent company-name normalization, and clearer handling of missing or invalid logo assets.
+
+These improvements can be introduced independently of source ingestion and job storage.
+
+## Next step
+
+Company branding handles the visual identity of published opportunities. Continue with Employment Inference to understand how Careers Engine determines employment categories from job listing information.
+
+<Card
+  title="Employment Inference"
+  icon="arrow-right"
+  href="/architecture/employment-inference"
+/>

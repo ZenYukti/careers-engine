@@ -1,8 +1,271 @@
 ---
 title: "Repository Layout"
-description: "Project structure and responsibilities."
+description: "How Careers Engine organizes application code, tests, documentation, automation, and persistent data."
 ---
 
-Documentation for this section is currently under development.
+# Repository Layout
 
-This page will explain how the repository is organized and which parts of the codebase own each responsibility.
+Careers Engine follows a modular Python project structure. Source integrations, parsers, filtering, employment classification, storage, and publishing are organized into separate components, while tests, documentation, and automation workflows remain independently maintainable.
+
+The project also separates application code from persistent operational data through the [`careers-data`](https://github.com/ZenYukti/careers-data) repository.
+
+## Repository Structure
+
+Explore the repository interactively. Expand any folder to inspect its files and subdirectories.
+
+<Tree>
+  <Tree.Folder name="careers-engine" defaultOpen>
+    <Tree.Folder name=".github" defaultOpen>
+      <Tree.Folder name="workflows" defaultOpen highlight>
+        <Tree.File name="ci.yml" />
+        <Tree.File name="ingest.yml" />
+        <Tree.File name="publish.yml" />
+        <Tree.File name="queue_opportunity.yml" />
+      </Tree.Folder>
+    </Tree.Folder>
+    <Tree.Folder name="docs">
+      <Tree.Folder name="api">
+        <Tree.File name="discord.mdx" />
+        <Tree.File name="models.mdx" />
+        <Tree.File name="parsers.mdx" />
+        <Tree.File name="sources.mdx" />
+        <Tree.File name="storage.mdx" />
+      </Tree.Folder>
+      <Tree.Folder name="architecture">
+        <Tree.File name="overview.mdx" />
+        <Tree.File name="ingestion-pipeline.mdx" />
+        <Tree.File name="publishing-pipeline.mdx" />
+        <Tree.File name="storage.mdx" />
+        <Tree.File name="company-branding.mdx" />
+        <Tree.File name="employment-inference.mdx" />
+        <Tree.File name="repository-layout.mdx" />
+      </Tree.Folder>
+      <Tree.Folder name="developer-guide">
+        <Tree.File name="adding-company.mdx" />
+        <Tree.File name="adding-employment-rule.mdx" />
+        <Tree.File name="adding-logo.mdx" />
+        <Tree.File name="adding-source.mdx" />
+        <Tree.File name="contributing.mdx" />
+        <Tree.File name="release-process.mdx" />
+        <Tree.File name="testing.mdx" />
+      </Tree.Folder>
+      <Tree.Folder name="getting-started">
+        <Tree.File name="configuration.mdx" />
+        <Tree.File name="discord-bot-setup.mdx" />
+        <Tree.File name="first-publish.mdx" />
+        <Tree.File name="github-actions.mdx" />
+        <Tree.File name="installation.mdx" />
+        <Tree.File name="introduction.mdx" />
+        <Tree.File name="running-locally.mdx" />
+      </Tree.Folder>
+      <Tree.Folder name="images">
+        <Tree.File name="architecture-overview.png" />
+        <Tree.File name="careers-engine-architecture.png" />
+        <Tree.File name="companies-supported.png" />
+        <Tree.File name="deployment.png" />
+        <Tree.File name="favicon.png" />
+        <Tree.File name="job-discovery-arch.png" />
+        <Tree.File name="major-components.png" />
+        <Tree.File name="logo.svg" />
+      </Tree.Folder>
+      <Tree.Folder name="reference">
+        <Tree.File name="cli.mdx" />
+        <Tree.File name="configuration.mdx" />
+        <Tree.File name="environment-variables.mdx" />
+        <Tree.File name="json-schema.mdx" />
+        <Tree.File name="workflows.mdx" />
+      </Tree.Folder>
+      <Tree.File name="zenyukti-jobs.mdx" />
+      <Tree.File name="docs.json" />
+    </Tree.Folder>
+    <Tree.Folder name="scripts" />
+    <Tree.Folder name="src" defaultOpen>
+      <Tree.Folder name="careers_engine" defaultOpen highlight>
+        <Tree.Folder name="company">
+          <Tree.File name="logos.py" />
+          <Tree.File name="metadata.py" />
+          <Tree.File name="registry.py" />
+          <Tree.File name="slugs.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="discord">
+          <Tree.File name="client.py" />
+          <Tree.File name="formatter.py" />
+          <Tree.File name="publisher.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="fetchers">
+          <Tree.File name="base.py" />
+          <Tree.File name="http.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="filters">
+          <Tree.File name="base.py" />
+          <Tree.File name="eligibility.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="models">
+          <Tree.File name="enums.py" />
+          <Tree.File name="job.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="parsers">
+          <Tree.File name="base.py" />
+          <Tree.File name="json.py" />
+          <Tree.File name="markdown_table.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="sources">
+          <Tree.File name="base.py" />
+          <Tree.File name="simplify.py" />
+          <Tree.File name="upstream.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="storage">
+          <Tree.File name="database.py" />
+          <Tree.File name="history.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.File name="config.py" />
+        <Tree.File name="employment.py" />
+        <Tree.File name="pipeline.py" />
+        <Tree.File name="__init__.py" />
+      </Tree.Folder>
+    </Tree.Folder>
+    <Tree.Folder name="tests" />
+    <Tree.File name=".env.example" />
+    <Tree.File name=".gitignore" />
+    <Tree.File name=".pre-commit-config.yaml" />
+    <Tree.File name="CONTRIBUTING.md" />
+    <Tree.File name="LICENSE" />
+    <Tree.File name="Makefile" />
+    <Tree.File name="pyproject.toml" />
+    <Tree.File name="uv.lock" />
+  </Tree.Folder>
+</Tree>
+
+<Note>
+  The tree focuses on the main source, documentation, and workflow files. Generated Python cache files and other transient files are intentionally omitted.
+</Note>
+
+## Application Code — `src/careers_engine/`
+
+Find the source here: https://github.com/ZenYukti/careers-engine/blob/main/src/careers_engine
+
+The application package contains the implementation of the aggregation and publishing engine.
+
+| Path | Responsibility |
+| --- | --- |
+| `sources/` | Retrieves listings from supported upstream sources. |
+| `parsers/` | Parses source-specific formats into normalized job records. |
+| `models/` | Defines the canonical job model and related types. |
+| `filters/` | Applies eligibility rules to collected opportunities. |
+| `employment.py` | Infers employment categories from job titles. |
+| `company/` | Maintains company branding metadata and logo-resolution logic. |
+| `assets/` | Organizes branding assets used by the application. |
+| `storage/` | Handles persistent job and workflow state. |
+| `pipeline.py` | Coordinates the ingestion pipeline. |
+| `config.py` | Centralizes application configuration and environment-derived settings. |
+
+Each component has a defined responsibility, allowing individual parts to evolve without requiring the entire pipeline to be rewritten.
+
+For the complete data flow, see the [Ingestion Pipeline](/architecture/ingestion-pipeline).
+
+## Scripts — `scripts/`
+
+The scripts directory contains the application's executable entry points for operational workflows.
+
+The main entry points are:
+
+- `collect.py`: runs the collection and ingestion process.
+- `publish.py`: runs the publishing process.
+
+Keeping these entry points separate makes ingestion and publishing independently executable, both locally and through GitHub Actions.
+
+See the [Running Locally](/getting-started/running-locally) guide for local execution instructions.
+
+## Tests — `tests/`
+
+The test suite validates the behavior of the application's components.
+
+Tests cover areas such as source adapters, parsers, eligibility filtering, employment classification, and other core logic.
+
+The separation of components makes it possible to test parsing and classification rules independently of scheduled workflows or live Discord publishing.
+
+The project uses Pytest for test execution, alongside Ruff for linting and formatting and Mypy for static type checking.
+
+See the [Testing Guide](/developer-guide/testing) for the project's testing workflow.
+
+## Documentation — `docs/`
+
+The documentation is organized by purpose rather than being maintained as one large guide.
+
+| Directory | Purpose |
+| --- | --- |
+| `getting-started/` | Installation, configuration, local execution, bot setup, and workflow setup. |
+| `architecture/` | System design, component responsibilities, and data flow. |
+| `developer-guide/` | Instructions for extending sources, logos, and employment rules, as well as contributing and testing. |
+| `api/` | Code-level interfaces and component references. |
+| `reference/` | Configuration, environment variables, schemas, CLI, and workflow details. |
+| `images/` | Diagrams and visual assets used by the documentation. |
+
+The documentation navigation is configured in `docs/docs.json`.
+
+## Automation — `.github/workflows/`
+
+GitHub Actions workflows automate scheduled and manually triggered operations.
+
+The ingestion workflow runs the collection entry point and persists changes to the data repository. The publishing workflow selects unpublished opportunities, delivers them to Discord, and persists publication history.
+
+Keeping orchestration in workflow definitions allows the application logic to remain executable independently of the CI environment.
+
+See the [GitHub Actions guide](/getting-started/github-actions) for setup and execution details.
+
+## Persistent Data — `careers-data`
+
+Persistent operational state lives in the separate [`careers-data`](https://github.com/ZenYukti/careers-data) repository.
+
+| File | Responsibility |
+| --- | --- |
+| `jobs.json` | Stores normalized job records. |
+| `history.json` | Tracks publication history. |
+| `queue.json` | Stores manually submitted opportunities for the Queue Opportunity workflow. |
+
+This separation prevents frequently changing generated data from being mixed with application source code. The workflows check out the data repository when they need to read or update its contents.
+
+See [Storage Architecture](/architecture/storage) for the persistence model and the responsibilities of each file.
+
+## Project Configuration
+
+The root configuration files support development, dependency management, and quality checks.
+
+- `pyproject.toml` defines project metadata, dependencies, and tool configuration.
+- `uv.lock` records the resolved dependency versions.
+- `Makefile` provides convenient commands for development and validation.
+
+These files make the development environment and quality checks easier to reproduce.
+
+## Extending the Repository
+
+When adding functionality, place it in the component that owns the relevant responsibility.
+
+- Add a new upstream integration under `sources/` and its corresponding parser where required.
+- Add eligibility behavior under `filters/`.
+- Extend employment classification in `employment.py`.
+- Add company branding through the existing company registry and asset conventions.
+- Add or update tests under `tests/`.
+- Update the relevant documentation when behavior or developer workflows change.
+
+Use the [Adding a Source](/developer-guide/adding-source), [Adding an Employment Rule](/developer-guide/adding-employment-rule), and [Adding a Logo](/developer-guide/adding-logo) guides for component-specific instructions.
+
+## Next step
+
+The architecture documentation now covers the system overview, ingestion, publishing, storage, company branding, employment inference, and repository organization.
+
+Continue with the [Developer Guide](/developer-guide/contributing) to learn how to contribute changes and extend Careers Engine safely.
+
+<Card
+  title="Contributing"
+  icon="arrow-right"
+  href="/developer-guide/contributing"
+/>
