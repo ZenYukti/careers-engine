@@ -46,9 +46,8 @@ async def main() -> None:
 
     if telegram_jobs:
         try:
-            publisher = TelegramPublisher()
+            publisher = TelegramPublisher(history=telegram_history)
             await publisher.publish(telegram_jobs)
-            telegram_history.mark_published(telegram_jobs)
         except Exception as exc:
             failures.append(f"Telegram: {exc}")
             print(f"Telegram publishing failed: {exc}")

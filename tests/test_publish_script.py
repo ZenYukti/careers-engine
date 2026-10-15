@@ -52,7 +52,6 @@ async def test_publishes_to_both_destinations(job: Job) -> None:
         discord_client.return_value.start_client.assert_awaited_once()
         telegram_publisher.return_value.publish.assert_awaited_once_with([job])
         discord_history.mark_published.assert_called_once_with([job])
-        telegram_history.mark_published.assert_called_once_with([job])
 
 
 @pytest.mark.asyncio
@@ -217,11 +216,15 @@ async def test_retries_only_failed_destination(job: Job) -> None:
     ):
         discord_client.return_value.start_client = AsyncMock()
         telegram_client = telegram_publisher.return_value
+
+        async def publish_telegram_jobs(jobs: list[Job]) -> None:
+            if telegram_client.publish.await_count == 1:
+                raise RuntimeError("Telegram unavailable")
+
+            telegram_published.update(item.apply_url for item in jobs)
+
         telegram_client.publish = AsyncMock(
-            side_effect=[
-                RuntimeError("Telegram unavailable"),
-                None,
-            ]
+            side_effect=publish_telegram_jobs,
         )
 
         with pytest.raises(RuntimeError, match="Publishing failed"):
