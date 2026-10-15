@@ -1,3 +1,4 @@
+from careers_engine.config import DISCORD_HISTORY_FILE
 from careers_engine.models import Job
 from careers_engine.storage import JobDatabase, PublishHistory
 
@@ -77,3 +78,20 @@ def test_mark_published(tmp_path):
 
     assert history.contains(jobs[0].identifier)
     assert history.contains(jobs[1].identifier)
+
+
+def test_default_history_path():
+    history = PublishHistory()
+
+    assert history.path == DISCORD_HISTORY_FILE
+
+
+def test_destination_histories_are_independent(tmp_path):
+    discord_history = PublishHistory(tmp_path / "delivery-history" / "discord.json")
+    telegram_history = PublishHistory(tmp_path / "delivery-history" / "telegram.json")
+
+    identifier = "abc123"
+    discord_history.add(identifier)
+
+    assert discord_history.contains(identifier)
+    assert not telegram_history.contains(identifier)
