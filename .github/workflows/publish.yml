@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
 
   # not starting simultaneously bcz race condition will occur if both workflows try to push to careers-data at the same time.
-  
-  # gives ingestion -> 10 mins to finish 
-  
+
+  # gives ingestion -> 10 mins to finish
+
   schedule:
     - cron: "40 4 * * *"   # 10:10 AM IST
     - cron: "40 13 * * *"  # 7:10 PM IST
@@ -19,6 +19,8 @@ jobs:
       DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
       DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       DATA_DIR: careers-data
 
     steps:
@@ -36,8 +38,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # Clone the external data repository used to persist publishing state.      
-      
+      # Clone the external data repository used to persist publishing state.
+
       - name: Clone careers-data
         run: |
           git clone \
@@ -45,23 +47,32 @@ jobs:
             https://x-access-token:${{ secrets.CAREERS_DATA_TOKEN }}@github.com/ZenYukti/careers-data.git
 
       - name: Publish jobs
-        run: |
-          uv run scripts/publish.py
+        id: publish
+        continue-on-error: true
+        run: uv run scripts/publish.py
 
       - name: Commit updated publishing state
+        if: always()
         run: |
           cd careers-data
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add history.json queue.json
-          
+          git add queue.json \
+            delivery-history/discord.json \
+            delivery-history/telegram.json
+
           if [[ -z "$(git status --porcelain)" ]]; then
             echo "No publishing state changes."
             exit 0
           fi
 
           git commit -m "chore(data): update publishing state"
-
           git push
+
+      - name: Fail workflow if publishing failed
+        if: steps.publish.outcome == 'failure'
+        run: |
+          echo "Publishing failed for one or more destinations."
+          exit 1
