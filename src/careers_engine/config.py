@@ -53,6 +53,11 @@ DISCORD_CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
 # Restrict publishing to a single Discord server
 DISCORD_GUILD_ID = int(os.environ.get("DISCORD_GUILD_ID", "0"))
 
+# telegram publishing channel
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
 # to be updated, when fetch_logos.py is run and assets/logos directory is updated
 # i.e) new version ro new images are downloaded
 # syntax: 1.0 -> 2.0 -> 3.0 -> 4.0... so on
