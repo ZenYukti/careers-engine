@@ -4,9 +4,10 @@ import discord
 
 from careers_engine.discord import JobFormatter
 from careers_engine.models import Job
+from careers_engine.publishing import JobPublisher
 
 
-class DiscordPublisher:
+class DiscordPublisher(JobPublisher):
     """Publish jobs to a Discord text channel."""
 
     def __init__(self, channel: discord.TextChannel) -> None:
