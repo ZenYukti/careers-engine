@@ -14,7 +14,7 @@ description: "Discover careers-engine."
 
 **careers-engine** is an open source platform for discovering, normalizing, and publishing software engineering opportunities from leading technology companies.
 
-It continuously collects opportunities from supported career sources, filters and enriches the data, stores a versioned job database, and publishes newly discovered opportunities to Discord communities through an automated publishing pipeline.
+It continuously collects opportunities from supported career sources, filters and enriches the data, stores a versioned job database, and publishes newly discovered opportunities to configured distribution channels, currently [Discord](https://go.zenyukti.in/discord) and [Telegram](https://t.me/zenyuktijobs), through an automated publishing pipeline.
 
 The project powers **ZenYukti Jobs** but can also be self hosted and customized for any community, organization, or server.
 
@@ -66,35 +66,40 @@ Instead of manually checking dozens of career portals every day, the platform co
 
 ## Key capabilities
 
-- Discover opportunities from major technology companies and engineering focused organizations.
+- Discover opportunities from major technology companies and engineering-focused organizations.
 - Normalize data from multiple career sources into a common format.
-- Maintain a version controlled job database through the [`careers-data`](https://github.com/zenyukti/careers-data/) repository.
-- Publish newly discovered opportunities to Discord automatically.
+- Maintain a version-controlled job database through the [`careers-data`](https://github.com/ZenYukti/careers-data) repository.
+- Publish opportunities to **Discord** and **Telegram** through independent publishers.
 - Support manual opportunity publishing through a review queue.
+- Track delivery history independently for each publishing destination.
 - Apply company branding and employment type inference before publishing.
-- Run entirely through scheduled GitHub Actions with no dedicated server required.
+- Run through scheduled GitHub Actions workflows without requiring a dedicated server.
 
 ---
 
 ## High level workflow
 
 ```text
+
 Supported Career Sources
-            │
-            ▼
-      Collect Jobs
-            │
-            ▼
+          │
+          ▼
+     Collect Jobs
+          │
+          ▼
  Normalize & Enrich Data
-            │
-            ▼
-      careers-data
-            │
-            ▼
- Detect New Opportunities
-            │
-            ▼
- Publish to Discord
+          │
+          ▼
+     careers-data
+          │
+          ▼
+ Select Unpublished Jobs
+          │
+          ▼
+  Publishing Orchestrator
+       ┌──┴──┐
+       ▼     ▼
+    Discord Telegram
 ```
 
 A more detailed walkthrough of each stage is available in the **Architecture** section.
@@ -111,7 +116,7 @@ careers-engine is built using modern, lightweight tooling.
 | Package manager | [uv](https://docs.astral.sh/uv/) |
 | Automation | [GitHub Actions](https://docs.github.com/en/actions) |
 | Storage | JSON ([`careers-data`](https://github.com/zenYukti/careers-data/)) |
-| Delivery | [Discord Bot API](https://docs.discord.com/developers/bots/overview) |
+| Delivery | [Discord Bot API](https://docs.discord.com/developers/bots/overview) & [Telegram Bot API](https://core.telegram.org/bots/api) |
 | Documentation | [Mintlify](https://www.mintlify.com/docs) |
 
 ---

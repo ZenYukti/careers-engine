@@ -1,15 +1,15 @@
 ---
 title: "Publishing Pipeline"
-description: "How Careers Engine selects unpublished jobs, tracks publication history, and distributes opportunities to Discord."
+description: "How Careers Engine selects unpublished jobs, tracks publication history, and distributes opportunities to Discord & Telegram."
 ---
 
 # Publishing Pipeline
 
-The publishing pipeline is responsible for distributing stored career opportunities to configured publishing channels.
+The publishing pipeline distributes stored career opportunities to configured publishing destinations.
 
-It operates independently of ingestion. Rather than fetching and parsing external sources, it consumes the normalized job records maintained by the ingestion pipeline, identifies jobs that have not yet been published, formats them for delivery, and updates publication history.
+It operates independently of ingestion. Rather than fetching and parsing external sources, it consumes normalized job records maintained by the ingestion pipeline, identifies jobs that have not yet been published to each destination, formats them for delivery, and maintains destination-specific publication history.
 
-Discord is the current publishing destination.
+Careers Engine currently supports Discord and Telegram. Each destination has its own publisher and delivery history, allowing the pipeline to track publication independently across channels.
 
 ## Pipeline Overview
 
@@ -17,38 +17,50 @@ Discord is the current publishing destination.
 flowchart TD
     A["GitHub Actions Trigger"] --> B["Prepare Environment"]
     B --> C["Load Stored Jobs"]
-    C --> D["Load Publication History"]
-    D --> E["Identify Unpublished Jobs"]
-    E --> F{"Any Jobs to Publish?"}
-    F -->|No| G["Exit Without Publishing"]
-    F -->|Yes| H["Format Job Messages"]
-    H --> I["Discord Publisher"]
-    I --> J["Discord Channel"]
-    I --> K["Update Publication History"]
-    K --> L["Persist history.json"]
+    C --> D["Load Discord and Telegram Histories"]
+
+    D --> E["Select Unpublished Jobs per Destination"]
+
+    E --> F["Discord Publisher"]
+    E --> G["Telegram Publisher"]
+
+    F --> H["Discord Channel"]
+    G --> I["Telegram Channel"]
+
+    F --> J["delivery-history/discord.json"]
+    G --> K["delivery-history/telegram.json"]
+
+    F --> L{"Any Destination Failed?"}
+    G --> L
+    L -->|Yes| M["Fail Publishing Run"]
+    L -->|No| N["Complete Publishing Run"]
 ```
 
 The publishing pipeline follows these steps:
 
-1. Load normalized jobs from persistent storage.
-2. Read the existing publication history.
-3. Identify jobs that have not already been published.
-4. Format eligible jobs for the destination channel.
-5. Send the formatted messages through the Discord bot.
-6. Update and persist publication history.
+1. Load normalized jobs and the separate delivery histories from persistent storage.
+2. Identify jobs that have not already been published to each destination.
+3. Format eligible jobs for the corresponding destination.
+4. Attempt delivery through the **Discord** and **Telegram** publishers independently.
+5. Record successful deliveries in the corresponding destination history.
+6. Report a failed run if either destination encounters an unrecovered failure.
+
+A destination does not depend on the other destination's publication history. A job can therefore be eligible for Telegram even if it has already been published to Discord.
 
 ## 1. Input Data
 
-The publisher consumes two persistent data files from the `careers-data` repository.
+The publishing pipeline consumes the following persistent data from the `careers-data` repository.
 
 | File | Responsibility |
 | --- | --- |
-| `jobs.json` | Contains the known normalized job records produced by ingestion. |
-| `history.json` | Tracks publication state so previously published jobs are not repeatedly selected. |
+| `jobs.json` | Contains normalized job records produced by ingestion. |
+| `delivery-history/discord.json` | Tracks jobs successfully published to Discord. |
+| `delivery-history/telegram.json` | Tracks jobs successfully published to Telegram. |
+| `queue.json` | Stores manually submitted opportunities awaiting processing through the queue workflow. |
 
-Keeping job data separate from publication history allows the system to distinguish between **discovering a job** and **publishing a job**.
+Keeping job data separate from destination-specific delivery histories allows the system to distinguish between **discovering a job** and **delivering a job to a particular destination**.
 
-A job may already exist in `jobs.json` without having been published. The publishing pipeline uses the history records to determine which jobs still need distribution.
+The pipeline evaluates publication eligibility separately for Discord and Telegram. A job already recorded in one destination's history may still need to be published to the other.
 
 ## 2. Selecting Unpublished Jobs
 
@@ -59,11 +71,11 @@ The job identifier generated by the canonical `Job` model provides the basis for
 ```mermaid
 flowchart TD
     A["Known Jobs"] --> C["Compare Job Identifiers"]
-    B["Publication History"] --> C
-    C --> D{"Previously Published?"}
-    D -->|Yes| E["Skip Job"]
-    D -->|No| F["Queue for Publishing"]
-    F --> G["Message Formatting"]
+    B["Destination History"] --> C
+    C --> D{"Published to This Destination?"}
+    D -->|Yes| E["Skip for This Destination"]
+    D -->|No| F["Select for Publishing"]
+    F --> G["Destination-Specific Formatting"]
 ```
 
 This check makes repeated publishing runs idempotent under normal operating conditions: jobs already recorded as published are not selected again.
@@ -82,9 +94,10 @@ This state is essential because ingestion and publishing run independently. New 
 
 Normalized job records are designed for consistent application-level processing, not necessarily for direct presentation to users.
 
-Before delivery, the publisher transforms each selected job into a Discord-compatible message.
+Before delivery, each destination's publisher formats selected jobs according to that destination's message requirements. 
+Discord and Telegram can use different presentation formats without requiring changes to upstream source adapters or parsers.
 
-The message can use the available job metadata, such as:
+**The message can use the available job metadata**, such as:
 
 - Company name.
 - Job title.
@@ -96,42 +109,63 @@ Formatting is kept separate from source parsing. This means the publisher does n
 
 As additional publishing channels are introduced, each channel can define its own presentation without requiring upstream parsers to change.
 
-## 4. Discord Delivery
+## 4. Destination Publishers
 
-The current publisher uses `discord.py` to interact with the Discord API.
+Careers Engine uses separate publishers to deliver opportunities through Discord and Telegram.
 
-The destination is configured through the application's environment, including the Discord bot token and target channel ID.
+### Discord
 
-The bot must have the required channel permissions to send the formatted opportunities.
+The Discord publisher uses `discord.py` to interact with the Discord API. Its configuration includes the bot token and target channel ID, and the bot must have sufficient permissions to send messages to the configured channel.
+
+### Telegram
+
+The Telegram publisher uses the Telegram Bot API. Its configuration includes the bot token and target chat ID.
+
+Telegram delivery handles HTTP 429 rate-limit responses using the API's `retry_after` value. It retries a failed request up to five times after the initial attempt, subject to the response containing a valid retry delay.
+
+After each successful Telegram delivery, the corresponding job is recorded in Telegram's publication history immediately. This preserves successful deliveries if a later message in the same run fails.
+
+### Independent Delivery
 
 ```mermaid
-flowchart LR
-    A["Unpublished Job"] --> B["Message Formatter"]
+flowchart TD
+    A["Unpublished Jobs"] --> B["Destination Selection"]
     B --> C["Discord Publisher"]
-    C --> D["Discord API"]
-    D --> E["Configured Channel"]
+    B --> D["Telegram Publisher"]
+
+    C --> E["Discord API"]
+    D --> F["Telegram Bot API"]
+
+    E --> G["Discord Channel"]
+    F --> H["Telegram Channel"]
+
+    C --> I["Discord Delivery History"]
+    D --> J["Telegram Delivery History"]
 ```
 
-Discord acts as the delivery layer rather than the source of truth for job records. The canonical job data remains in `careers-data`, independently of the messages sent to the channel.
-
-This separation allows publishing to be rerun without requiring the application to recollect every upstream listing.
+Discord and Telegram are delivery destinations, not the source of truth for job records. Canonical job data remains in `careers-data`, independently of the messages sent to either channel.
 
 ## 5. Persisting Publication State
 
-Publication history must reflect actual delivery, not merely an attempt to send a message.
+Publication history must reflect successful delivery rather than merely an attempt to send a message.
 
-After a job is successfully published, its publication state is recorded and persisted to `history.json`.
+Careers Engine maintains separate histories:
 
-This allows later runs to skip it and focus on jobs that have not yet been distributed.
+- `delivery-history/discord.json`
+- `delivery-history/telegram.json`
 
-If no publication state changes, the workflow avoids unnecessary data commits.
+Each publisher updates the history associated with its destination. Telegram records each successful job immediately after delivery, reducing the risk of losing successful delivery records when a subsequent message fails.
 
-The publishing process therefore maintains two distinct kinds of state:
+The orchestration attempts delivery to both destinations independently. If either destination fails, the publishing run reports a failure rather than treating the overall run as fully successful.
+
+The manual queue is cleared only when the publishing run completes without destination failures. The workflow also persists updated data-repository state when the publishing step fails, so successful deliveries recorded before a later failure can survive into subsequent runs.
+
+This is not a transactional or exactly-once delivery system. If a destination accepts a message but the application fails before the corresponding history is persisted, a later retry may send that message again.
+
+The publishing process maintains two distinct kinds of state:
 
 - **Job state:** which opportunities the system knows about.
-- **Publication state:** which opportunities have been distributed.
-
-This distinction prevents the ingestion pipeline from being coupled to Discord delivery.
+- **Delivery state:** which opportunities have been recorded as successfully published to each destination.
 
 ## 6. Automated Execution
 
@@ -139,19 +173,27 @@ GitHub Actions orchestrates the publishing workflow.
 
 The workflow supports scheduled execution and manual triggering. It prepares the environment, checks out the persistent data repository, and executes `scripts/publish.py`.
 
-Publishing is scheduled every six hours, with a ten-minute offset from the ingestion schedule. This reduces the chance of both workflows attempting to update the shared data repository simultaneously.
+Publishing is scheduled twice daily at **10:10 AM and 7:10 PM IST**, with a ten-minute offset from the ingestion schedule. This reduces the chance of both workflows attempting to update the shared data repository simultaneously.
 
 ```mermaid
 flowchart TD
     A["Scheduled or Manual Trigger"] --> B["Prepare Environment"]
     B --> C["Check Out careers-data"]
-    C --> D["Run scripts/publish.py"]
-    D --> E["Load Jobs and History"]
-    E --> F["Publish Unpublished Jobs"]
-    F --> G["Update history.json"]
-    G --> H{"History Changed?"}
-    H -->|Yes| I["Commit and Push Changes"]
-    H -->|No| J["Finish Without a Data Commit"]
+    C --> D["Load Jobs and Destination Histories"]
+    D --> E["Run scripts/publish.py"]
+
+    E --> F["Attempt Discord Publishing"]
+    E --> G["Attempt Telegram Publishing"]
+
+    F --> H["Update Discord History"]
+    G --> I["Update Telegram History"]
+
+    H --> J["Persist Data Repository Changes"]
+    I --> J
+
+    J --> K{"Publishing Failed?"}
+    K -->|Yes| L["Fail Workflow"]
+    K -->|No| M["Complete Workflow"]
 ```
 
 The ingestion and publishing workflows are separate:
@@ -166,21 +208,28 @@ This separation allows either workflow to be run independently when needed.
 The publishing architecture follows several principles:
 
 - **Separation of responsibilities:** Collection and delivery are handled by different pipelines.
-- **Stateful deduplication:** Publication history prevents previously recorded jobs from being repeatedly selected.
-- **Destination abstraction:** Message formatting and publishing are distinct from source-specific parsing.
+- **Destination-specific deduplication:** Independent delivery histories prevent one destination's success from suppressing delivery to another.
+- **Destination abstraction:** Each publisher can format and deliver messages according to its destination's requirements.
 - **Repeatable execution:** Scheduled and manual runs use the same publishing entry point.
-- **Persistent state:** Publication history survives across workflow executions through the separate data repository.
-- **Change-aware persistence:** The workflow commits updated history only when changes need to be saved.
+- **Persistent state:** Delivery history survives workflow executions through the separate data repository.
+- **Partial-failure handling:** Both destinations are attempted independently, and failures are surfaced rather than silently treated as success.
+- **Change-aware persistence:** Updated operational state is committed when changes need to be saved.
 
 ## Failure Boundaries and Limitations
 
-Publishing depends on Discord availability, valid credentials, correct channel configuration, and sufficient bot permissions.
+Publishing depends on destination availability, valid credentials, configuration, and permissions.
 
-A delivery failure must not be treated as a successful publication. Publication history should only advance when delivery succeeds, otherwise a later run may incorrectly skip a job that was never delivered.
+Discord and Telegram are attempted independently; an unrecovered failure causes the publishing run to fail.
 
-The current history-based design also depends on stable job identifiers. Changes to a job's identifying fields can cause it to be treated as a different record.
+Telegram HTTP 429 responses use bounded retries based on the API's `retry_after` value.
 
-As the system grows, possible improvements include more robust retry handling, explicit delivery-state transitions, rate-limit handling, and additional publishers.
+Changes to job identifiers can cause previously known opportunities to be treated as new records.
+
+Delivery and history persistence are not transactional, so duplicate messages remain possible after partial failures.
+
+Git-based JSON storage has concurrency and transactional limitations.
+
+Future improvements may include stronger delivery reconciliation and recovery for partial failures.
 
 ## Next step
 

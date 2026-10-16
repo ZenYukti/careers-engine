@@ -52,6 +52,7 @@ Explore the repository interactively. Expand any folder to inspect its files and
       <Tree.Folder name="getting-started">
         <Tree.File name="configuration.mdx" />
         <Tree.File name="discord-bot-setup.mdx" />
+        <Tree.File name="telegram-bot-setup.mdx" />
         <Tree.File name="first-publish.mdx" />
         <Tree.File name="github-actions.mdx" />
         <Tree.File name="installation.mdx" />
@@ -91,6 +92,10 @@ Explore the repository interactively. Expand any folder to inspect its files and
         <Tree.Folder name="discord">
           <Tree.File name="client.py" />
           <Tree.File name="formatter.py" />
+          <Tree.File name="publisher.py" />
+          <Tree.File name="__init__.py" />
+        </Tree.Folder>
+        <Tree.Folder name="telegram">
           <Tree.File name="publisher.py" />
           <Tree.File name="__init__.py" />
         </Tree.Folder>
@@ -163,6 +168,8 @@ The application package contains the implementation of the aggregation and publi
 | `employment.py` | Infers employment categories from job titles. |
 | `company/` | Maintains company branding metadata and logo-resolution logic. |
 | `assets/` | Organizes branding assets used by the application. |
+| `discord/` | Formats and publishes opportunities to Discord. |
+| `telegram/` | Publishes opportunities to Telegram and handles Telegram API responses. |
 | `storage/` | Handles persistent job and workflow state. |
 | `pipeline.py` | Coordinates the ingestion pipeline. |
 | `config.py` | Centralizes application configuration and environment-derived settings. |
@@ -190,7 +197,7 @@ The test suite validates the behavior of the application's components.
 
 Tests cover areas such as source adapters, parsers, eligibility filtering, employment classification, and other core logic.
 
-The separation of components makes it possible to test parsing and classification rules independently of scheduled workflows or live Discord publishing.
+The separation of components makes it possible to test parsing, classification, and destination publishing independently of scheduled workflows and live delivery.
 
 The project uses Pytest for test execution, alongside Ruff for linting and formatting and Mypy for static type checking.
 
@@ -215,7 +222,8 @@ The documentation navigation is configured in `docs/docs.json`.
 
 GitHub Actions workflows automate scheduled and manually triggered operations.
 
-The ingestion workflow runs the collection entry point and persists changes to the data repository. The publishing workflow selects unpublished opportunities, delivers them to Discord, and persists publication history.
+The ingestion workflow runs the collection entry point and persists changes to the data repository. 
+The publishing workflow selects unpublished opportunities independently for Discord and Telegram, attempts delivery through both publishers, and persists destination-specific publication history.
 
 Keeping orchestration in workflow definitions allows the application logic to remain executable independently of the CI environment.
 
@@ -228,7 +236,8 @@ Persistent operational state lives in the separate [`careers-data`](https://gith
 | File | Responsibility |
 | --- | --- |
 | `jobs.json` | Stores normalized job records. |
-| `history.json` | Tracks publication history. |
+| `delivery-history/discord.json` | Tracks opportunities published to Discord. |
+| `delivery-history/telegram.json` | Tracks opportunities published to Telegram. |
 | `queue.json` | Stores manually submitted opportunities for the Queue Opportunity workflow. |
 
 This separation prevents frequently changing generated data from being mixed with application source code. The workflows check out the data repository when they need to read or update its contents.
