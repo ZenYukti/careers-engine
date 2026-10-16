@@ -11,13 +11,16 @@ The storage layer currently uses JSON files to preserve state across workflow ex
 
 ## Storage Layout
 
-The current storage layer uses three primary files.
+The persistent data repository contains the following files:
 
 | File | Responsibility |
 | --- | --- |
 | `jobs.json` | Stores normalized career opportunities collected by the ingestion pipeline. |
-| `history.json` | Tracks publication history so previously published opportunities can be recognized. |
-| `queue.json` | Stores manually submitted opportunities awaiting processing through the Queue Opportunity workflow. |
+| `queue.json` | Stores manually submitted opportunities awaiting processing through the Queue Opportunity workflow by [Team ZenYukti](https://zenyukti.in/people). |
+| `delivery-history/discord.json` | Tracks opportunities successfully published to the configured Discord destination. |
+| `delivery-history/telegram.json` | Tracks opportunities successfully published to the configured Telegram destination. |
+
+Each destination has its own publication history, allowing the publishing pipeline to determine independently which opportunities still need to be delivered to Discord or Telegram.
 
 These files represent different parts of the system's state and are not interchangeable.
 
@@ -27,10 +30,18 @@ These files represent different parts of the system's state and are not intercha
 flowchart TD
     A["Source Ingestion"] --> B["jobs.json"]
     C["Queue Opportunity Workflow"] --> D["queue.json"]
+
     B --> E["Publishing Pipeline"]
     D --> E
-    E --> F["Discord"]
-    E --> G["history.json"]
+
+    E --> F["Discord Publisher"]
+    E --> G["Telegram Publisher"]
+
+    F --> H["Discord"]
+    G --> I["Telegram"]
+
+    F --> J["delivery-history/discord.json"]
+    G --> K["delivery-history/telegram.json"]
 ```
 
 The ingestion pipeline populates the known-job collection, while the Queue Opportunity workflow provides a separate path for manually submitted opportunities. The publishing pipeline uses the relevant stored state to distribute opportunities and maintain publication history.
@@ -49,17 +60,20 @@ Each job receives a deterministic SHA-256 identifier derived from its company, r
 
 See the [Ingestion Pipeline](/architecture/ingestion-pipeline) for the complete data flow and normalization process.
 
-## Publication History — `history.json`
+## Destination-Specific Publication History
 
-`history.json` maintains the state used by the publishing pipeline to identify previously published opportunities.
+Careers Engine maintains separate publication histories for each destination:
 
-A job may exist in `jobs.json` without having been published. The publisher compares known job identifiers against publication history to determine which opportunities still need distribution.
+- `delivery-history/discord.json` tracks opportunities successfully published to Discord.
+- `delivery-history/telegram.json` tracks opportunities successfully published to Telegram.
 
-Separating publication history from job records means that discovering an opportunity and distributing it are treated as distinct operations.
+A job may exist in `jobs.json` without having been published to either destination. The publishing pipeline compares job identifiers against each destination's history to determine which opportunities still need to be delivered there.
 
-This separation also allows scheduled publishing runs to avoid repeatedly selecting jobs already recorded as published.
+This separation allows an opportunity to be published to one destination without incorrectly treating it as published to every destination. For example, a job recorded in Discord history but absent from Telegram history can still be selected for Telegram publication.
 
-See the [Publishing Pipeline](/architecture/publishing-pipeline) for the publication lifecycle.
+Successful Telegram deliveries are recorded individually as they occur, helping preserve delivery state when a later message encounters an error. Publication history still depends on successful persistence of the updated data, so it does not provide an absolute exactly-once delivery guarantee.
+
+See the [Publishing Pipeline](/architecture/publishing-pipeline) for the complete publication lifecycle.
 
 ## Manual Opportunity Queue — `queue.json`
 
@@ -73,7 +87,9 @@ This complements automated ingestion:
 - **Manual queuing** allows opportunities to be submitted explicitly through the queue workflow.
 - **Publishing** distributes opportunities through the configured publishing mechanism.
 
-The queue is a distinct input path, not a replacement for `jobs.json` or `history.json`.
+The **queue is a distinct input path**, not a replacement for `jobs.json` or either destination's publication history.
+
+The publishing workflow attempts delivery to Discord and Telegram independently. Queue state is cleared only when the publishing run completes without destination failures, so a failure on either destination can leave queued opportunities available for a subsequent run.
 
 The exact queue-processing and removal behavior is determined by the Queue Opportunity workflow implementation; the presence of `queue.json` alone does not imply that every queued item has already been published.
 
@@ -84,7 +100,7 @@ Careers Engine uses separate repositories for application code and persistent op
 | Repository | Contents |
 | --- | --- |
 | [`careers-engine`](https://github.com/ZenYukti/careers-engine) | Source adapters, parsers, filters, data models, storage logic, publishers, tests, documentation, and GitHub Actions workflows. |
-| [`careers-data`](https://github.com/ZenYukti/careers-data) | Persistent JSON state, including job records, publication history, and the manual opportunity queue. |
+| [`careers-data`](https://github.com/ZenYukti/careers-data) | Persistent JSON state: jobs.json, queue.json, and the separate Discord and Telegram delivery-history files. |
 
 The application repository defines how data is processed; the data repository preserves state between executions.
 
@@ -100,8 +116,9 @@ The storage directory is controlled by the `DATA_DIR` environment variable.
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
 
 JOBS_FILE = DATA_DIR / "jobs.json"
-HISTORY_FILE = DATA_DIR / "history.json"
 QUEUE_FILE = DATA_DIR / "queue.json"
+DISCORD_HISTORY_FILE = DATA_DIR / "delivery-history" / "discord.json"
+TELEGRAM_HISTORY_FILE = DATA_DIR / "delivery-history" / "telegram.json"
 ```
 
 When `DATA_DIR` is not configured, the application defaults to a local `data` directory. Deployment workflows can point it to the checked-out `careers-data` repository.
@@ -130,7 +147,8 @@ The storage design has several constraints:
 - JSON files are less suitable for complex queries and large datasets than a database.
 - Git-based persistence does not provide database transactions.
 - Exact-field identifiers may fail to recognize semantically identical listings with inconsistent metadata.
-- Publication history must remain consistent with actual delivery outcomes.
+- Each destination's publication history must remain consistent with actual delivery outcomes. 
+- A message may reach a destination before a later failure prevents the corresponding state from being persisted, so retries can potentially produce duplicates.
 - Queue processing must handle failures and state transitions carefully to avoid losing or repeatedly processing manually submitted opportunities.
 
 If the system's workload grows, possible improvements include stronger concurrency control, transactional persistence, more sophisticated deduplication, and a database backend such as PostgreSQL.

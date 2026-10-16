@@ -109,6 +109,7 @@
         "getting-started/configuration",
         "getting-started/running-locally",
         "getting-started/discord-bot-setup",
+        "getting-started/telegram-bot-setup",
         "getting-started/github-actions",
         "getting-started/first-publish"
       ]

@@ -18,7 +18,7 @@ At a high level, the system follows this flow:
   alt="ZenYukti Careers Engine architecture overview"
 />
 
-The current implementation uses SpeedyApply and Simplify as upstream sources and Discord as its publishing channel.
+The current implementation uses SpeedyApply and Simplify as upstream sources, with Discord and Telegram as publishing destinations.
 
 ## Major Components
 
@@ -105,7 +105,7 @@ Publishing is handled separately from ingestion.
 
 The publishing pipeline reads the stored jobs, determines which opportunities have not yet been published, formats them for the configured publisher, and sends them to the distribution channel.
 
-The current publisher is Discord.
+Each destination has its own publisher implementation and delivery history, allowing the system to track successful deliveries independently and retry failed destinations without treating another destination's success as a failure.
 
 Publishing history is persisted so that subsequent executions do not repeatedly publish the same opportunities.
 
@@ -118,13 +118,13 @@ The current automation consists of two independent workflows:
 1. **Ingestion workflow**
    - collects opportunities from configured sources
    - applies the ingestion pipeline
-   - updates `careers-data/jobs.json`
+   - updates [`careers-data/jobs.json`](https://github.com/ZenYukti/careers-data/blob/main/jobs.json)
 
 2. **Publishing workflow**
    - reads the stored jobs
    - checks publishing history
-   - publishes new opportunities to Discord
-   - updates `careers-data/history.json`
+   - publishes new opportunities to Discord & Telegram
+   - updates [`careers-data/delivery-history/`](https://github.com/ZenYukti/careers-data/tree/main/delivery-history)
 
 The workflows run on a schedule and can also be triggered manually.
 
@@ -221,7 +221,8 @@ Contains the persistent datasets produced and consumed by the engine.
 The primary files are:
 
 - `jobs.json`
-- `history.json`
+- `delivery-history/discord.json`
+- `delivery-history/telegram.json`
 
 This separation allows the engine to update persistent state without mixing generated data with application source code.
 

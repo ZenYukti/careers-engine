@@ -1,0 +1,67 @@
+---
+title: "Telegram Bot Setup"
+description: "Configure Telegram publishing for Careers Engine."
+---
+
+Careers Engine can publish opportunities to Telegram using a bot connected to your target channel or chat.
+
+This guide covers creating the bot, configuring the destination, and obtaining the credentials used by Careers Engine.
+
+---
+
+## Create a Telegram bot
+
+Open Telegram and start a conversation with [@BotFather](https://t.me/BotFather).
+
+1. Send `/newbot`.
+2. Choose a display name and username for the bot.
+3. Copy the bot token provided by BotFather.
+
+<Warning>
+Treat your bot token like a password. Never commit it to Git or share it publicly.
+</Warning>
+
+---
+
+## Configure the destination
+
+Add the bot to your target Telegram channel and grant it permission to publish messages. For a group, ensure it has the required messaging permissions.
+
+Obtain the target chat ID and configure it alongside the bot token.
+
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+```
+
+The chat ID must identify the destination where Careers Engine should publish opportunities.
+
+---
+
+## Verify the configuration
+
+Ensure your `.env` file contains the required Telegram variables and the `DATA_DIR` path configured in the [Configuration guide](/getting-started/configuration).
+
+---
+
+## Troubleshooting
+
+Common issues include:
+
+- Invalid bot token.
+- Bot not added to the destination.
+- Missing channel or group permissions.
+- Incorrect chat ID.
+- Telegram API rate limits.
+
+---
+
+## Next step
+
+Continue with GitHub Actions to configure the credentials required for automated publishing.
+
+<Card
+  title="GitHub Actions"
+  icon="github"
+  href="/getting-started/github-actions"
+/>
