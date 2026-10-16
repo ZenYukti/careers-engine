@@ -34,7 +34,18 @@
       "github": "https://github.com/ZenYukti/careers-engine",
       "linkedin": "https://linkedin.com/company/zenyukti",
       "discord": "https://go.zenyukti.in/discord"
-    }
+    },
+    "links": [
+      {
+        "header": "Legal",
+        "items": [
+          {
+            "label": "Privacy",
+            "href": "/privacy"
+          }
+        ]
+      }
+    ]
   },
   "contextual": {
     "options": [
