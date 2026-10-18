@@ -20,6 +20,10 @@
       {
         "href": "https://go.zenyukti.in/discord",
         "label": "Discord"
+      },
+      {
+        "href": "https://t.me/zenyuktijobs",
+        "label": "Telegram"
       }
     ],
     "primary": {
