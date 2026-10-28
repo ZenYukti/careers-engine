@@ -15,14 +15,14 @@ async def fetch_board_json(
     url: str,
     provider: str,
     board: str,
-) -> dict | None:
+) -> dict | list | None:
     """Fetch a board's JSON response without interrupting other boards."""
 
     try:
         content = await fetcher.fetch(url)
         data = json.loads(content)
 
-        if not isinstance(data, dict):
+        if not isinstance(data, (dict, list)):
             logger.warning(
                 "Skipping %s board %s: unexpected response format",
                 provider,
