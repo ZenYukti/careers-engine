@@ -12,6 +12,7 @@ EMPLOYMENT_TYPE_ALIASES = {
     "fulltime": EmploymentType.FULL_TIME,
     "part time": EmploymentType.PART_TIME,
     "part-time": EmploymentType.PART_TIME,
+    "parttime": EmploymentType.PART_TIME,
     "contract": EmploymentType.CONTRACT,
     "contractor": EmploymentType.CONTRACT,
     "fixed term": EmploymentType.CONTRACT,
@@ -85,3 +86,17 @@ def infer_employment_type(role: str) -> EmploymentType:
         return EmploymentType.CONTRACT
 
     return EmploymentType.FULL_TIME
+
+
+def normalize_employment_type(
+    value: str | None,
+    role: str,
+) -> EmploymentType:
+    if value:
+        normalized = value.replace("_", " ").replace("-", " ")
+        try:
+            return parse_employment_type(normalized)
+        except ValueError:
+            pass
+
+    return infer_employment_type(role)
