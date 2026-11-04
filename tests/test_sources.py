@@ -5,7 +5,13 @@ import httpx
 import pytest
 
 from careers_engine.models import Job
-from careers_engine.sources import AshbySource, GreenhouseSource, SimplifySource, UpstreamSource
+from careers_engine.sources import (
+    AshbySource,
+    GreenhouseSource,
+    LeverSource,
+    SimplifySource,
+    UpstreamSource,
+)
 
 FIXTURE = Path(__file__).parent / "fixtures" / "intern_intl.md"
 
@@ -130,9 +136,7 @@ async def test_ashby_collect_jobs():
 
     with patch(
         "careers_engine.sources.ashby.get_boards",
-        return_value=[
-            {"slug": "google", "company_name": "Google"}
-        ],
+        return_value=[{"slug": "google", "company_name": "Google"}],
     ):
         source.fetcher.fetch = AsyncMock(
             return_value="""
@@ -167,6 +171,7 @@ async def test_ashby_collect_jobs():
     [
         (AshbySource, "ashby"),
         (GreenhouseSource, "greenhouse"),
+        (LeverSource, "lever"),
     ],
 )
 @pytest.mark.asyncio
@@ -232,7 +237,42 @@ async def test_greenhouse_collect_jobs():
     assert jobs[0].company == "Google"
     assert jobs[0].role == "Software Engineer Intern"
     assert jobs[0].location == "Bengaluru, India"
-    assert jobs[0].apply_url == (
-        "https://boards.greenhouse.io/google/jobs/123"
-    )
+    assert jobs[0].apply_url == ("https://boards.greenhouse.io/google/jobs/123")
+    assert jobs[0].description == "Internship opportunity"
+
+
+@pytest.mark.asyncio
+async def test_lever_collect_jobs():
+    source = LeverSource()
+
+    with patch(
+        "careers_engine.sources.lever.get_boards",
+        return_value=[
+            {"slug": "google", "company_name": "Google"},
+        ],
+    ):
+        source.fetcher.fetch = AsyncMock(
+            return_value="""
+            [
+                {
+                    "id": "123",
+                    "text": "Software Engineer Intern",
+                    "hostedUrl": "https://jobs.lever.co/google/123",
+                    "categories": {
+                        "location": "Bengaluru, India",
+                        "commitment": "Full-time"
+                    },
+                    "descriptionPlain": "Internship opportunity"
+                }
+            ]
+            """
+        )
+
+        jobs = await source.collect()
+
+    assert len(jobs) == 1
+    assert jobs[0].company == "Google"
+    assert jobs[0].role == "Software Engineer Intern"
+    assert jobs[0].location == "Bengaluru, India"
+    assert jobs[0].apply_url == "https://jobs.lever.co/google/123"
     assert jobs[0].description == "Internship opportunity"

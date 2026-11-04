@@ -5,10 +5,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-URL = (
-    "https://raw.githubusercontent.com/"
-    "moonie0201/ats-directory/main/companies.jsonl.gz"
-)
+URL = "https://raw.githubusercontent.com/moonie0201/ats-directory/main/companies.jsonl.gz"
 
 PROVIDERS = {"ashby", "greenhouse", "lever"}
 
@@ -20,11 +17,7 @@ request = urllib.request.Request(
 with urllib.request.urlopen(request, timeout=60) as response:
     content = gzip.decompress(response.read())
 
-records = [
-    json.loads(line)
-    for line in content.splitlines()
-    if line.strip()
-]
+records = [json.loads(line) for line in content.splitlines() if line.strip()]
 
 boards = [
     {
@@ -33,20 +26,14 @@ boards = [
         "company_name": row.get("name"),
     }
     for row in records
-    if row["provider"] in PROVIDERS
-    and row["status"] == "ok"
+    if row["provider"] in PROVIDERS and row["status"] == "ok"
 ]
 
 # Remove duplicate provider/slug entries.
-unique_boards = {
-    (board["provider"], board["slug"]): board
-    for board in boards
-}
+unique_boards = {(board["provider"], board["slug"]): board for board in boards}
 boards = list(unique_boards.values())
 
-boards.sort(
-    key=lambda row: (row["provider"], row["slug"].casefold())
-)
+boards.sort(key=lambda row: (row["provider"], row["slug"].casefold()))
 
 grouped_boards = {
     provider: [
@@ -77,12 +64,6 @@ output.write_text(json.dumps(registry, indent=2) + "\n")
 print(f"Registry generated: {output}")
 print(f"Total verified boards: {len(boards)}")
 
-for provider, count in sorted(
-    Counter(board["provider"] for board in boards).items()
-):
-    missing = sum(
-        not board["company_name"]
-        for board in boards
-        if board["provider"] == provider
-    )
+for provider, count in sorted(Counter(board["provider"] for board in boards).items()):
+    missing = sum(not board["company_name"] for board in boards if board["provider"] == provider)
     print(f"{provider}: {count} boards, {missing} missing names")

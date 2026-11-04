@@ -10,9 +10,7 @@ from careers_engine.sources.base import BaseSource
 class GreenhouseSource(BaseSource):
     """Collect jobs from configured Greenhouse job boards."""
 
-    API_URL = (
-        "https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true"
-    )
+    API_URL = "https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true"
 
     @property
     def name(self) -> str:
@@ -31,7 +29,7 @@ class GreenhouseSource(BaseSource):
                 board=slug,
             )
 
-            if data is None:
+            if data is None or not isinstance(data, dict):
                 continue
 
             for posting in data.get("jobs", []):
@@ -45,11 +43,7 @@ class GreenhouseSource(BaseSource):
 
                 jobs.append(
                     Job(
-                        company=(
-                            board.get("company_name")
-                            or posting.get("company_name")
-                            or slug
-                        ),
+                        company=(board.get("company_name") or posting.get("company_name") or slug),
                         role=title,
                         location=location_data.get("name") or "Not specified",
                         apply_url=apply_url,

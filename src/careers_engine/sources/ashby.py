@@ -29,7 +29,7 @@ class AshbySource(BaseSource):
                 board=slug,
             )
 
-            if data is None:
+            if data is None or not isinstance(data, dict):
                 continue
 
             for posting in data.get("jobs", []):

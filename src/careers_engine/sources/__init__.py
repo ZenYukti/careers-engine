@@ -23,4 +23,5 @@ def get_sources() -> list[BaseSource]:
         SimplifySource(),
         AshbySource(),
         GreenhouseSource(),
+        LeverSource(),
     ]
