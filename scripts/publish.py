@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 
 from careers_engine.config import (
     DISCORD_HISTORY_FILE,
@@ -11,6 +12,8 @@ from careers_engine.config import (
 from careers_engine.discord.client import DiscordClient
 from careers_engine.storage import JobDatabase, PublishHistory
 from careers_engine.telegram import TelegramPublisher
+
+MAX_PUBLISH_PER_RUN = int(os.getenv("MAX_PUBLISH_PER_RUN", "25"))
 
 
 async def main() -> None:
@@ -23,8 +26,10 @@ async def main() -> None:
     discord_history = PublishHistory(DISCORD_HISTORY_FILE)
     telegram_history = PublishHistory(TELEGRAM_HISTORY_FILE)
 
-    discord_jobs = discord_history.unpublished(automatic_jobs + queued_jobs)
-    telegram_jobs = telegram_history.unpublished(automatic_jobs + queued_jobs)
+    all_jobs = automatic_jobs + queued_jobs
+
+    discord_jobs = discord_history.unpublished(all_jobs)[:MAX_PUBLISH_PER_RUN]
+    telegram_jobs = telegram_history.unpublished(all_jobs)[:MAX_PUBLISH_PER_RUN]
 
     if not discord_jobs and not telegram_jobs:
         if queued_jobs:
@@ -37,6 +42,7 @@ async def main() -> None:
 
     if discord_jobs:
         try:
+            print(f"Publishing batch of {len(discord_jobs)} jobs to Discord...")
             client = DiscordClient(discord_jobs)
             await client.start_client()
             discord_history.mark_published(discord_jobs)
@@ -46,6 +52,7 @@ async def main() -> None:
 
     if telegram_jobs:
         try:
+            print(f"Publishing batch of {len(telegram_jobs)} jobs to Telegram...")
             publisher = TelegramPublisher(history=telegram_history)
             await publisher.publish(telegram_jobs)
         except Exception as exc:
@@ -53,9 +60,12 @@ async def main() -> None:
             print(f"Telegram publishing failed: {exc}")
 
     if failures:
-        raise RuntimeError("Publishing failed for one or more destinations: " + "; ".join(failures))
+        msg = "Publishing failed for one or more destinations: " + "; ".join(failures)
+        raise RuntimeError(msg)
 
-    if queued_jobs:
+    is_discord_done = not discord_history.unpublished(queued_jobs)
+    is_telegram_done = not telegram_history.unpublished(queued_jobs)
+    if queued_jobs and is_discord_done and is_telegram_done:
         queue_database.save([])
 
 
