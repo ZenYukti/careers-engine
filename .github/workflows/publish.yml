@@ -2,18 +2,20 @@ name: Publish Jobs
 
 on:
   workflow_dispatch:
-
-  # not starting simultaneously bcz race condition will occur if both workflows try to push to careers-data at the same time.
-
-  # gives ingestion -> 10 mins to finish
-
   schedule:
     - cron: "40 4 * * *"   # 10:10 AM IST
     - cron: "40 13 * * *"  # 7:10 PM IST
 
+# Prevent concurrent runs from overlapping and conflicting on git push
+# Applied (needed) after Workflow !261 (https://github.com/ZenYukti/careers-engine/actions/runs/41861967297)
+concurrency:
+  group: publish-jobs
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # so we don't loose unnecessary github actions run-time CI minutes
 
     env:
       DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
@@ -22,6 +24,8 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       DATA_DIR: careers-data
+      PYTHONUNBUFFERED: "1"
+      MAX_PUBLISH_PER_RUN: "25"
 
     steps:
       - name: Checkout source
@@ -39,7 +43,6 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       # Clone the external data repository used to persist publishing state.
-
       - name: Clone careers-data
         run: |
           git clone \
@@ -69,6 +72,7 @@ jobs:
           fi
 
           git commit -m "chore(data): update publishing state"
+          git pull --rebase origin main
           git push
 
       - name: Fail workflow if publishing failed
