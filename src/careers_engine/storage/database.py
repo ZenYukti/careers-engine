@@ -34,24 +34,43 @@ class JobDatabase:
         return [Job.from_dict(item) for item in jobs]
 
     def save(self, jobs: list[Job]) -> None:
+        cleaned_jobs = []
+        seen_urls = set()
+
+        for job in jobs:
+            # Drop descriptions to keep jobs.json tiny for Discord/Telegram bots
+            job_clean = job.model_copy(update={"description": None})
+
+            # Normalize apply_url for deduplication
+            url = (job_clean.apply_url or "").strip().rstrip("/")
+            if url and url in seen_urls:
+                continue
+            if url:
+                seen_urls.add(url)
+
+            cleaned_jobs.append(job_clean)
+
         payload = {
             "version": 1,
             "updated_at": datetime.now(UTC).isoformat(),
-            "jobs": [job.model_dump(mode="json") for job in jobs],
+            "jobs": [job.model_dump(mode="json") for job in cleaned_jobs],
         }
 
-        # creating parent directory beofre writing the file
         self.path.parent.mkdir(parents=True, exist_ok=True)
-
         self.path.write_text(json.dumps(payload, indent=4, ensure_ascii=False))
 
     def add(self, job: Job) -> bool:
         jobs = self.load()
 
-        if any(existing.identifier == job.identifier for existing in jobs):
+        job_clean = job.model_copy(update={"description": None})
+        url = (job_clean.apply_url or "").strip().rstrip("/")
+        if any((existing.apply_url or "").strip().rstrip("/") == url for existing in jobs if url):
             return False
 
-        jobs.append(job)
+        if any(existing.identifier == job_clean.identifier for existing in jobs):
+            return False
+
+        jobs.append(job_clean)
         self.save(jobs)
 
         return True
@@ -63,20 +82,28 @@ class JobDatabase:
         """Persist jobs and return newly discovered jobs."""
 
         existing = self.load()
-
         existing_by_id = {job.identifier: job for job in existing}
+        existing_urls = {
+            (job.apply_url or "").strip().rstrip("/") for job in existing if job.apply_url
+        }
 
-        merged_jobs: list[Job] = []
+        merged_jobs: list[Job] = list(existing)
         new_jobs: list[Job] = []
 
         for job in jobs:
-            if job.identifier in existing_by_id:
-                merged_jobs.append(existing_by_id[job.identifier])
-            else:
-                merged_jobs.append(job)
-                new_jobs.append(job)
+            job_clean = job.model_copy(update={"description": None})
+            url = (job_clean.apply_url or "").strip().rstrip("/")
 
-        if new_jobs:
+            if job_clean.identifier in existing_by_id or (url and url in existing_urls):
+                continue
+
+            merged_jobs.append(job_clean)
+            new_jobs.append(job_clean)
+            if url:
+                existing_urls.add(url)
+            existing_by_id[job_clean.identifier] = job_clean
+
+        if new_jobs or len(merged_jobs) != len(existing):
             self.save(merged_jobs)
 
         return new_jobs
