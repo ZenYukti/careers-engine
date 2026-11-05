@@ -13,7 +13,8 @@ from careers_engine.discord.client import DiscordClient
 from careers_engine.storage import JobDatabase, PublishHistory
 from careers_engine.telegram import TelegramPublisher
 
-MAX_PUBLISH_PER_RUN = int(os.getenv("MAX_PUBLISH_PER_RUN", "25"))
+# Publish a small, non-spammmy batch of 4 jobs per run
+MAX_PUBLISH_PER_RUN = int(os.getenv("MAX_PUBLISH_PER_RUN", "4"))
 
 
 async def main() -> None:

@@ -3,8 +3,7 @@ name: Publish Jobs
 on:
   workflow_dispatch:
   schedule:
-    - cron: "40 4 * * *"   # 10:10 AM IST
-    - cron: "40 13 * * *"  # 7:10 PM IST
+    - cron: "40 4,8,14,19 * * *"
 
 # Prevent concurrent runs from overlapping and conflicting on git push
 # Applied (needed) after Workflow !261 (https://github.com/ZenYukti/careers-engine/actions/runs/41861967297)
@@ -25,7 +24,7 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       DATA_DIR: careers-data
       PYTHONUNBUFFERED: "1"
-      MAX_PUBLISH_PER_RUN: "25"
+      MAX_PUBLISH_PER_RUN: "4"
 
     steps:
       - name: Checkout source
