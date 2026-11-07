@@ -35,7 +35,9 @@ class EligibilityFilter(JobFilter):
         r"marketing|copywriter|social\s+media|customer\s+success|customer\s+support|"
         r"annotation|annotator|ai\s+tutor|ai\s+trainer|research\s+contributor|domain\s+expert|"
         r"staff\b|principal\b|director\b|\bvp\b|vice\s+president|head\s+of|lead\b|manager\b|"
-        r"senior\b|\bsr\.?\b|iii\b|iv\b"
+        r"senior\b|\bsr\.?\b"
+        # Catch numeric levels II, III, IV, or digit 2, 3, etc. as for senior roles
+        r"ii\b|iii\b|iv\b|\b[2-9]\b"
         r")\b",
         re.IGNORECASE,
     )
