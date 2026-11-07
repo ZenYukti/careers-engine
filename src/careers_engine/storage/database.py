@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 from careers_engine.config import JOBS_FILE
 from careers_engine.models import Job
+
+MAX_RETENTION_DAYS = 7
 
 
 class JobDatabase:
@@ -18,6 +20,25 @@ class JobDatabase:
         if not self.path.exists():
             self.save([])
 
+    @staticmethod
+    def _purge_expired_jobs(jobs: list[Job]) -> list[Job]:
+        """Automatically remove jobs older than the retention window."""
+        now = datetime.now(timezone.utc)
+        valid_jobs = []
+        for job in jobs:
+            if job.discovered_at is None:
+                valid_jobs.append(job)
+                continue
+
+            # Ensure timezone-aware comparison
+            discovered = job.discovered_at
+            if discovered.tzinfo is None:
+                discovered = discovered.replace(tzinfo=timezone.utc)
+
+            if (now - discovered) <= timedelta(days=MAX_RETENTION_DAYS):
+                valid_jobs.append(job)
+        return valid_jobs
+
     def load(self) -> list[Job]:
         if not self.path.exists():
             return []
@@ -28,16 +49,21 @@ class JobDatabase:
             return []
 
         payload = json.loads(content)
-
         jobs = payload.get("jobs", [])
 
-        return [Job.from_dict(item) for item in jobs]
+        parsed_jobs = [Job.from_dict(item) for item in jobs]
+
+        # Automatically purge expired jobs on load so storage stays lean
+        return self._purge_expired_jobs(parsed_jobs)
 
     def save(self, jobs: list[Job]) -> None:
+        # Purge expired jobs before saving
+        valid_jobs = self._purge_expired_jobs(jobs)
+
         cleaned_jobs = []
         seen_urls = set()
 
-        for job in jobs:
+        for job in valid_jobs:
             # Drop descriptions to keep jobs.json tiny for Discord/Telegram bots
             job_clean = job.model_copy(update={"description": None})
 
