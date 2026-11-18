@@ -11,6 +11,10 @@ on:
   # so, 10:00 AM IST -> 04:30 AM UTC
   # and 07:00 PM IST -> 13:30 PM UTC
 
+concurrency:
+  group: careers-data-write
+  cancel-in-progress: false
+
 jobs:
   ingest:
     runs-on: ubuntu-latest
@@ -60,5 +64,5 @@ jobs:
           fi
 
           git commit -m "chore(data): update jobs database"
-
+          git pull --rebase origin main
           git push

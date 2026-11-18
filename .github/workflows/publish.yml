@@ -8,7 +8,7 @@ on:
 # Prevent concurrent runs from overlapping and conflicting on git push
 # Applied (needed) after Workflow !261 (https://github.com/ZenYukti/careers-engine/actions/runs/41861967297)
 concurrency:
-  group: publish-jobs
+  group: careers-data-write
   cancel-in-progress: false
 
 jobs:

@@ -54,7 +54,11 @@ on:
       description:
         description: Additional information shown in Discord
         required: false
-        
+
+concurrency:
+  group: careers-data-write
+  cancel-in-progress: false
+
 jobs:
   queue:
     runs-on: ubuntu-latest
@@ -113,5 +117,5 @@ jobs:
           fi
 
           git commit -m "chore(queue): enqueue manual opportunity"
-
+          git pull --rebase origin main
           git push
