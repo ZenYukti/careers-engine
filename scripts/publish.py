@@ -11,6 +11,7 @@ from careers_engine.config import (
     TELEGRAM_HISTORY_FILE,
 )
 from careers_engine.discord.client import DiscordClient
+from careers_engine.filters.eligibility import EligibilityFilter
 from careers_engine.storage import JobDatabase, PublishHistory
 from careers_engine.telegram import TelegramPublisher
 
@@ -31,7 +32,11 @@ async def main() -> None:
     discord_history = PublishHistory(DISCORD_HISTORY_FILE)
     telegram_history = PublishHistory(TELEGRAM_HISTORY_FILE)
 
-    all_jobs = automatic_jobs + queued_jobs
+    # Filter automatic jobs through EligibilityFilter; manual queued_jobs bypass it
+    eligibility_filter = EligibilityFilter()
+    eligible_automatic_jobs = [job for job in automatic_jobs if eligibility_filter.match(job)]
+
+    all_jobs = eligible_automatic_jobs + queued_jobs
 
     # Filter jobs by 7-day retention / freshness window
     now = datetime.now(timezone.utc)
