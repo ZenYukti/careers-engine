@@ -22,6 +22,26 @@ MAX_PUBLISH_PER_RUN = int(os.getenv("MAX_PUBLISH_PER_RUN", "4"))
 MAX_JOB_AGE_HOURS = 24 * 7
 
 
+def _job_signature(job) -> tuple[str, str, str]:
+    return (
+        " ".join(job.company.lower().split()),
+        " ".join(job.role.lower().split()),
+        " ".join(job.location.lower().split()),
+    )
+
+
+def _dedupe_by_signature(jobs: list) -> list:
+    seen: set[tuple[str, str, str]] = set()
+    unique = []
+    for job in jobs:
+        sig = _job_signature(job)
+        if sig in seen:
+            continue
+        seen.add(sig)
+        unique.append(job)
+    return unique
+
+
 async def main() -> None:
     automatic_database = JobDatabase(JOBS_FILE)
     queue_database = JobDatabase(QUEUE_FILE)
@@ -64,8 +84,12 @@ async def main() -> None:
     )
 
     # Get the small batch from the sorted, fresh pool
-    discord_jobs = discord_history.unpublished(fresh_jobs)[:MAX_PUBLISH_PER_RUN]
-    telegram_jobs = telegram_history.unpublished(fresh_jobs)[:MAX_PUBLISH_PER_RUN]
+    discord_jobs = _dedupe_by_signature(discord_history.unpublished(fresh_jobs))[
+        :MAX_PUBLISH_PER_RUN
+    ]
+    telegram_jobs = _dedupe_by_signature(telegram_history.unpublished(fresh_jobs))[
+        :MAX_PUBLISH_PER_RUN
+    ]
 
     if not discord_jobs and not telegram_jobs:
         if queued_jobs:
