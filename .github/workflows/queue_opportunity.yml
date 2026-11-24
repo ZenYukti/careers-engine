@@ -50,7 +50,7 @@ on:
       eligibility:
         description: Eligibility
         required: false
-      
+
       description:
         description: Additional information shown in Discord
         required: false
