@@ -1,4 +1,4 @@
-.PHONY: install format lint typecheck test check clean
+.PHONY: install format lint pre-commit typecheck test check clean
 
 install:
 	uv sync
@@ -15,6 +15,9 @@ typecheck:
 test:
 	uv run pytest
 
+pre-commit:
+	uv run pre-commit run --all-files
+
 run:
 	uv run python -m careers_engine.pipeline.runner
 
@@ -24,7 +27,7 @@ collect:
 publish:
 	uv run python -m careers_engine.pipeline.publish
 
-check: lint format typecheck test
+check: pre-commit lint format typecheck test
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +

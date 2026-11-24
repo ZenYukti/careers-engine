@@ -14,7 +14,7 @@ class Pipeline:
         for source in get_sources():
             jobs.extend(await source.collect())
 
-        """ today it includes only IndiaFilter() intentionally, 
+        """ today it includes only IndiaFilter() intentionally,
             but tomorrow it can include directly other filters
             as well like:
             filters = [

@@ -147,7 +147,7 @@ The storage design has several constraints:
 - JSON files are less suitable for complex queries and large datasets than a database.
 - Git-based persistence does not provide database transactions.
 - Exact-field identifiers may fail to recognize semantically identical listings with inconsistent metadata.
-- Each destination's publication history must remain consistent with actual delivery outcomes. 
+- Each destination's publication history must remain consistent with actual delivery outcomes.
 - A message may reach a destination before a later failure prevents the corresponding state from being persisted, so retries can potentially produce duplicates.
 - Queue processing must handle failures and state transitions carefully to avoid losing or repeatedly processing manually submitted opportunities.
 
